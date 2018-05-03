@@ -1,0 +1,153 @@
+<resources>
+    <string name="app_name">Conn Rail</string>
+
+    <string name="session_num">Day/Session Number:</string>
+    <string name="new_session">New Day/Session</string>
+    <string name="alerts">Alerts</string>
+    <string name="no_alerts">No Alerts</string>
+    <string name="car">car</string>
+    <string name="cars">cars</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Generic buttons { -->
+    <string name="button_add">Add</string>
+    <string name="button_save">Save</string>
+    <string name="button_dont_save">Don\'t Save</string>
+    <string name="button_delete">Delete</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_done">Done</string>
+    <string name="button_search">Search</string>
+    <string name="button_edit">Edit</string>
+    <!-- } Generic buttons -->
+
+    <!-- Generic text { -->
+    <string name="text_day">day</string>
+    <string name="text_days">days</string>
+    <!-- } Generic text { -->
+
+    <string name="action_network_settings">Network Settings</string>
+    <string name="action_end">End</string>
+
+    <!-- App Menus { -->
+    <string name="menu_run">Run</string>
+    <string name="menu_consist_list">Train Master</string>
+    <string name="menu_yard_list">Yard Master</string>
+    <string name="menu_car_status">Car Location</string>
+
+    <string name="menu_setup">Setup</string>
+    <string name="menu_user_list">User List</string>
+    <string name="menu_spot_list">Spot List</string>
+    <string name="menu_car_list">Car List</string>
+    <string name="menu_car_info">Car Info</string>
+
+    <string name="menu_info">Info</string>
+    <string name="menu_about">About</string>
+    <string name="menu_help">Help</string>
+    <!-- } App Menus -->
+
+    <string name="about_text">This is the about text</string>
+    <string name="website_link">http://connriverlines.weebly.com/</string>
+
+    <string name="help_text">This is some help text that provides help. TODO - put in separate file. This is some help text that provides help. TODO - put in separate file. This is some help text that provides help. TODOD - put in separate file. This is some help text that provides help. TODO - put in separate file. This is some help text that provides help. TODO - put in separate file.This is some help text that provides help. TODOD - put in separate file.</string>
+
+    <!-- Car Add/Edit { -->
+    <string name="title_car_add_edit">Car Add/Edit</string>
+    <string name="hint_init">Initials</string>
+    <string name="hint_num">Number</string>
+    <string name="hint_type">Type</string>
+    <string name="hint_lading">Lading (optional)</string>
+    <string name="hint_notes">Notes (optional)</string>
+    <string name="hint_spots">Spots/Destinations</string>
+    <string name="select_spot">Select Spot</string>
+
+    <string-array name="car_types">
+        <item>Boxcar</item>
+        <item>Container</item>
+        <item>Cov. Hopper</item>
+        <item>Flatcar</item>
+        <item>Gondola</item>
+        <item>Hopper</item>
+        <item>Milk Car</item>
+        <item>Reefer</item>
+        <item>Stock Car</item>
+        <item>Tank Car</item>
+        <item>TOFC</item>
+        <item>Other</item>
+    </string-array>
+
+    <string name="msg_duplicate_car">Car already exists</string>
+    <string name="msg_save_car_changes">Save changes to car?</string>
+    <string name="msg_minimum_two">At least two spots/destinations are required</string>
+    <string name="msg_first_last">First and last spots/destinations must be different</string>
+    <string name="msg_diff_seq">Sequential spots/destinations must be different</string>
+    <string name="msg_car_use">Spot currently used by</string>
+    <string name="msg_delete_sure">Are you sure you want to delete?</string>
+    <string name="button_add_spot">Add Spot/Destination</string>
+    <string name="button_add_car">Add Car</string>
+
+    <!-- } Car Add/Edit -->
+
+    <!-- Spot Add/Edit { -->
+    <string name="msg_duplicate_spot">Spot already exists</string>
+    <string name="msg_save_spot_changes">Save changes to spot?</string>
+
+    <string name="title_spot_add_edit">Spot Add/Edit</string>
+    <string name="hint_town">City/Town</string>
+    <string name="hint_industry">Industry</string>
+    <string name="hint_track">Track</string>
+    <string name="hint_instructions">Instructions (optional)</string>
+
+    <string name="town">City/Town:</string>
+    <string name="industry">Industry:</string>
+    <string name="track">Track:</string>
+    <string name="lading">Lading:</string>
+    <string name="instructions">Instructions:</string>
+    <string name="lading2">Lading</string>
+    <string name="instructions2">Instructions</string>
+
+    <!-- } Spot Add/Edit -->
+
+    <!-- Car Location { -->
+    <string name="show_stored_cars">Show cars in storage</string>
+    <string name="status_unknown">[Unknown]</string>
+    <string name="status_is_stored">[In storage]</string>
+    <string name="status_set_stored">In storage</string>
+    <string name="tab_town">City/Town</string>
+    <string name="tab_train">Train</string>
+    <string name="tab_storage">Storage</string>
+    <!-- } Car Status -->
+
+    <!-- Consist  { -->
+    <string name="consist_name">Name</string>
+    <string name="consist_desc">Description</string>
+    <string name="new_consist">New Train</string>
+    <string name="edit_consist">Edit Train</string>
+    <string name="msg_duplicate_consist">Train name already exists</string>
+    <string name="msg_bad_consist_name">Train name invalid</string>
+    <string name="button_add_pickup">Add/Pickup Available Car</string>
+    <string name="button_add_train">Add Train</string>
+    <!-- } Consist -->
+
+    <string name="current_location">Current Location</string>
+    <string name="destination">Destination</string>
+    <string name="err_spots_defined">Error with Spots/Destinations</string>
+    <string name="no_current_defined">No current location defined</string>
+    <string name="hold_car">Hold car at current location</string>
+    <string name="deliver">Deliver</string>
+    <string name="setout_desc">Setout car to temporary location</string>
+    <string name="setout">Setout</string>
+    <string name="current_town">Current City/Town</string>
+
+    <string name="show_all_cars">Show all cars</string>
+    <string name="days_to_hold">Days/Sessions\nto hold car: </string>
+
+    <string name="all">[All]</string>
+
+    <string name="import_db">Import Database File</string>
+    <string name="export_db">Export Database File</string>
+
+</resources>

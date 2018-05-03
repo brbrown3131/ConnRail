@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item android:title="@string/menu_run">
+            <menu>
+
+                <item
+                    android:id="@+id/nav_consist"
+                    android:title="@string/menu_consist_list" />
+                <item
+                    android:id="@+id/nav_yard_list"
+                    android:title="@string/menu_yard_list" />
+
+            </menu>
+        </item>
+
+    </group>
+
+    <group>
+        <item
+            android:title="@string/menu_setup"
+            android:id="@+id/groupSetup">
+            <menu>
+                <item
+                    android:id="@+id/nav_spot_list"
+                    android:title="@string/menu_spot_list" />
+                <item
+                    android:id="@+id/nav_car_list"
+                    android:title="@string/menu_car_list" />
+                <item
+                    android:id="@+id/nav_car_status"
+                    android:title="@string/menu_car_status" />
+                <item
+                    android:id="@+id/nav_user_list"
+                    android:visible="false"
+                    android:title="@string/menu_user_list" />
+
+            </menu>
+        </item>
+    </group>
+
+    <group>
+        <item android:title="@string/menu_info">
+            <menu>
+                <item
+                    android:id="@+id/nav_about"
+                    android:title="@string/menu_about" />
+
+                <item
+                    android:id="@+id/nav_help"
+                    android:title="@string/menu_help" />
+            </menu>
+        </item>
+
+    </group>
+
+</menu>
