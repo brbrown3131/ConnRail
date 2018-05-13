@@ -29,7 +29,7 @@
             android:parentActivityName=".MainActivity" />
 
         <activity
-            android:name=".Help"
+            android:name=".HelpActivity"
             android:label="@string/menu_help"
             android:parentActivityName=".MainActivity" />
 

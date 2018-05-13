@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -296,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(this, About.class));
                 break;
             case R.id.nav_help:
-                startActivity(new Intent(this, Help.class));
+                startActivity(new Intent(this, HelpActivity.class));
                 break;
         }
 

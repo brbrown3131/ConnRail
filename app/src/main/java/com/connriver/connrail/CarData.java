@@ -23,7 +23,7 @@ public class CarData implements Serializable{
     private boolean bIsInStorage; // true if car is in storage
 
     public CarData() {
-        ixSpot = 0; // first spot by default
+        ixSpot = NONE; // no spot by default
         idConsist = NONE; // not in a consist by default
         idCurrentLoc = NONE;
         ixHoldUntilDay = NONE;
