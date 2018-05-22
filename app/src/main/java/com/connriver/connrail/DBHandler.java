@@ -26,9 +26,11 @@ public class DBHandler {
     // TODO allow separate server - pc, cloud
 
     // allow the default name to be changed
-    public DBHandler(Context context, String DBName) {
-        this.DBName = DBName;
-        initDB(context);
+    public void setDbName(String sx) {
+        DBName = sx;
+    }
+    public String getDbName() {
+        return DBName;
     }
 
     public DBHandler(Context context) {
@@ -39,6 +41,7 @@ public class DBHandler {
     private String PX(String sx) {
         return sx.replace("'","''");
     }
+
     private void initDB(Context context) {
         currentContext = context;
 

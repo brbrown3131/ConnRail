@@ -225,7 +225,7 @@ public class ConsistActivity extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_car_list, null);
         builder.setView(dialogView);
-        builder.setTitle(consistData.getName());
+        builder.setTitle(R.string.available_cars);
 
         ListView lv = (ListView) dialogView.findViewById(R.id.carListView);
         final CarList clAvail = new CarList(lv, getBaseContext(), availableList);
@@ -294,6 +294,7 @@ public class ConsistActivity extends AppCompatActivity {
         if (requestCode == SET_CAR_INFO && resultCode == RESULT_OK) {
             CarData cd = (CarData) data.getSerializableExtra(MainActivity.CAR_DATA);
             cdSelected.copyLocation(cd);
+            updateConsistList();
             updateView();
         }
     }

@@ -129,6 +129,7 @@
     <string name="msg_duplicate_consist">Train name already exists</string>
     <string name="msg_bad_consist_name">Train name invalid</string>
     <string name="button_add_pickup">Add/Pickup Available Car</string>
+    <string name="available_cars">Available Cars</string>
     <string name="button_add_train">Add Train</string>
     <!-- } Consist -->
 
@@ -149,5 +150,7 @@
 
     <string name="import_db">Import Database File</string>
     <string name="export_db">Export Database File</string>
+    <string name="export_done">Export complete to file:\n</string>
+    <string name="import_done">Import complete from file:\n</string>
 
 </resources>

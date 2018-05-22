@@ -1,5 +1,6 @@
 package com.connriver.connrail;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -74,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // set the context for utils
         Utils.init(this);
-        DBUtils.init(this, DBUtils.MODE_SINGLE_USER);
 
         // get the session number
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
@@ -103,28 +103,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        updateData(this);
+    }
+
+    public static void updateData(Context ctx) {
+        DBUtils.init(ctx, DBUtils.MODE_SINGLE_USER);
+
         // load car information from the db
-        if (gCarData == null) {
-            gCarData = new ArrayList<CarData>();
-            DBUtils.loadCarData();
-        }
+        gCarData = new ArrayList<CarData>();
+        DBUtils.loadCarData();
 
         // load spot information from the db
-        if (gSpotData == null) {
-            gSpotData = new ArrayList<>();
-            DBUtils.loadSpotData();
-        }
+        gSpotData = new ArrayList<>();
+        DBUtils.loadSpotData();
 
         // load consist information from the db
-        if (gConsistData == null) {
-            gConsistData = new ArrayList<>();
-            DBUtils.loadConsistData();
-        }
+        gConsistData = new ArrayList<>();
+        DBUtils.loadConsistData();
 
         // remove all dead spots
         Utils.removeAllDeadSpots();
 
-         // TODO - set up listener for db changes made by other users in multiuser mode
+        // TODO - set up listener for db changes made by other users in multiuser mode
     }
 
     @Override

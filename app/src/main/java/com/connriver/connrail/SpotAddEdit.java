@@ -230,9 +230,14 @@ public class SpotAddEdit extends AppCompatActivity {
 
     private void messageDelete() {
         int iUse = getUseCount(sdEdit.getID());
-        String sx = getResources().getString(R.string.msg_car_use) + " " + iUse + " " +
-                    (iUse == 1 ? getResources().getString(R.string.car) : getResources().getString(R.string.cars) ) +
+        String sx;
+        if (iUse == 0) {
+            sx = getResources().getString(R.string.msg_delete_sure);
+        } else {
+            sx = getResources().getString(R.string.msg_car_use) + " " + iUse + " " +
+                    (iUse == 1 ? getResources().getString(R.string.car) : getResources().getString(R.string.cars)) +
                     ". " + getResources().getString(R.string.msg_delete_sure);
+        }
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setMessage(sx);
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.button_ok),

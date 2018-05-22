@@ -1,6 +1,7 @@
 package com.connriver.connrail;
 
 import android.content.Context;
+import android.util.Log;
 
 /**
  * Created by bbrown on 3/16/2018.
@@ -23,6 +24,21 @@ public class DBUtils {
         }
     }
 
+    //====================================
+
+    public static void setDbName(String sx) {
+        if (iMode == MODE_SINGLE_USER) {
+            dbh.setDbName(sx);
+        }
+    }
+    public static String getDbName() {
+        if (iMode == MODE_SINGLE_USER) {
+            return dbh.getDbName();
+        }
+        return null;
+    }
+
+    //====================================
     public static void loadCarData() {
         if (iMode == MODE_SINGLE_USER) {
             dbh.loadCarData();
@@ -30,6 +46,7 @@ public class DBUtils {
     }
 
     public static void saveCarData() {
+        Log.d("BBB", "Save Car Data");
         if (iMode == MODE_SINGLE_USER) {
             dbh.saveCarData();
         }

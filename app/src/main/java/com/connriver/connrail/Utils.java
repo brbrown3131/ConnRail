@@ -192,11 +192,11 @@ public class Utils {
         return et.getText().toString().trim();
     }
 
-    public static void messageBox(String sTitle, String sMessage, Activity act) {
-        AlertDialog alertDialog = new AlertDialog.Builder(act).create();
+    public static void messageBox(String sTitle, String sMessage, Context ctx) {
+        AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
         alertDialog.setTitle(sTitle);
         alertDialog.setMessage(sMessage);
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, act.getResources().getString(R.string.button_ok),
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, ctx.getResources().getString(R.string.button_ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
