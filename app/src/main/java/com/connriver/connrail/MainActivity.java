@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // global defines ===============================================================
     public static final int CARDATA_SPOT_MAX = 4;
     public static final int NONE = -1;
+    public static final String TAG = "ConnRail";
     // global defines ===============================================================
 
     // global data
@@ -32,12 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static ArrayList<SpotData> gSpotData = null; // global spot data
     public static ArrayList<ConsistData> gConsistData = null; // global spot data
     private static int iSessionNumber = 0;
-    public static boolean bShowInStorage = false;
-
-    public static final int USER_LEVEL_OWNER = 0;
-    public static final int USER_LEVEL_ADMIN = 1;
-    public static final int USER_LEVEL_REGULAR = 2;
-    public static int userLevel  = USER_LEVEL_OWNER;
+    public static boolean bShowInStorage = true;
 
     public static final int ALERT_LOCATION = 1;
     public static final int ALERT_SPOTS = 2;
@@ -124,8 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // remove all dead spots
         Utils.removeAllDeadSpots();
-
-        // TODO - set up listener for db changes made by other users in multiuser mode
     }
 
     @Override
@@ -238,15 +232,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    private void resetDB() {
-        gCarData.clear();
-        DBUtils.saveCarData();
-        gSpotData.clear();
-        DBUtils.saveSpotData();
-        gConsistData.clear();
-        DBUtils.saveConsistData();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -257,9 +242,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.action_network_settings:
                 startActivity(new Intent(this, NetworkSettings.class));
-                break;
-            case R.id.action_reset_db: //TODO - temp. Reset the db to simple
-                resetDB();
                 break;
             case R.id.action_end:
                 finish();
@@ -282,9 +264,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_car_status:
                 startActivity(new Intent(this, CarLocationListActivity.class));
-                break;
-            case R.id.nav_user_list:
-                //TODO - add user management
                 break;
             case R.id.nav_car_list:
                 startActivity(new Intent(this, CarListActivity.class));

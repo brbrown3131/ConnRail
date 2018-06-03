@@ -2,21 +2,17 @@ package com.connriver.connrail;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,10 +20,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.channels.FileChannel;
-import java.util.List;
+
+import static com.connriver.connrail.MainActivity.TAG;
 
 public class NetworkSettings extends AppCompatActivity {
 
@@ -60,11 +54,7 @@ public class NetworkSettings extends AppCompatActivity {
         if (!isReadAllowed()) {
             return;
         }
-
-        //TODO - warn current data override
-
         showReadChooser();
-
     }
 
     private void showReadChooser() {
@@ -128,7 +118,7 @@ public class NetworkSettings extends AppCompatActivity {
             is.close();
             os.close();
         } catch(IOException e) {
-            Log.d("BBB", "exception - stream copy");
+            Log.d(TAG, "exception - stream copy");
             return;
         }
         Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.export_done), this);
@@ -157,7 +147,7 @@ public class NetworkSettings extends AppCompatActivity {
             is.close();
             os.close();
         } catch(IOException e) {
-            Log.d("BBB", "exception - stream copy");
+            Log.d(TAG, "exception - stream copy");
             return;
         }
 

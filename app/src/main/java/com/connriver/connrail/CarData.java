@@ -147,8 +147,6 @@ public class CarData implements Serializable{
         bIsInStorage = false;
         idConsist = NONE;
 
-        //TODO - moved car temporarily from hold spot, need to put it back -  may need a current target/next target?
-
         // default the hold days to 0 - can move car again in current session
         ixHoldUntilDay = MainActivity.getSessionNumber();
 

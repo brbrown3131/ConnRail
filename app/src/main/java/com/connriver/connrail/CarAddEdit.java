@@ -229,12 +229,10 @@ public class CarAddEdit extends AppCompatActivity {
         final CarSpotData csdOriginal = new CarSpotData(csd);
         int id = csd.getID();
         if (id == -1) {
-            //TODO - error
             return;
         }
         SpotData sd = Utils.getSpotFromID(id);
         if (sd == null) {
-            //TODO - error
             return;
         }
 
@@ -305,7 +303,7 @@ public class CarAddEdit extends AppCompatActivity {
         ad.show();
     }
 
-    // enable the save button if all requirements met //TODO - spot list
+    // enable the save button if all requirements met
     private void updateSaveButton() {
         String sInit = Utils.trim(etInit);
         String sNum = Utils.trim(etNum);
@@ -323,7 +321,6 @@ public class CarAddEdit extends AppCompatActivity {
         listCarSpotData.remove(pos);
         bCarSpotDataChanged = true;
 
-        //TODO - reset the current cardata index when spotlist saved
         updateSpotList();
         updateSaveButton();
     }
@@ -383,7 +380,7 @@ public class CarAddEdit extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SpotData sd = MainActivity.gSpotData.get(position);
-                CarSpotData csd = new CarSpotData(sd.getID(), 1); // 1 day by default
+                CarSpotData csd = new CarSpotData(sd.getID(), 0); // 0 days by default
                 listCarSpotData.add(csd);
                 bCarSpotDataChanged = true;
                 updateSpotList();
@@ -484,10 +481,29 @@ public class CarAddEdit extends AppCompatActivity {
     }
 
     private void onDeleteClicked() {
-        //TODO - messagebox - sure?
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setMessage(getResources().getString(R.string.msg_delete_sure));
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.button_ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteCar();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.button_cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        alertDialog.show();
+    }
+
+    private void deleteCar() {
         if (ixEdit != -1) {
             MainActivity.gCarData.remove(ixEdit);
         }
+        DBUtils.saveCarData();
         finish();
     }
 

@@ -47,7 +47,6 @@ public class TownFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         sCurrentTown = getArguments().getString(MainActivity.TOWN_NAME);
-        Log.d("BBB", "sCurTown = " + (sCurrentTown == null ? "NULL" : sCurrentTown));
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_town, container, false);
@@ -105,7 +104,6 @@ public class TownFragment extends Fragment {
     }
 
     private void setSpot(int pos) {
-        Log.d("BBB", "setSpot sCurTown = " + (sCurrentTown == null ? "NULL" : sCurrentTown));
         SpotData sd = sl.getSpotData(pos);
         mCallback.onSpotSelected(sd.getID(), sCurrentTown);
     }

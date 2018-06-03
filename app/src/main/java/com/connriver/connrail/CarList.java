@@ -169,6 +169,9 @@ public class CarList {
             if (iConsist != NONE) {
                 holder.ivCurr.setImageResource(R.drawable.ic_train);
                 ConsistData csd = Utils.getConsistFromID(iConsist);
+                if (csd == null) {
+                    return;
+                }
                 holder.tvTownCurr.setText(csd.getName());
                 holder.tvIndustryCurr.setText("");
                 holder.tvTrackCurr.setText("");

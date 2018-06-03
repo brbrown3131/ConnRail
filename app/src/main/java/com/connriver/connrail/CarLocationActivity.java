@@ -65,7 +65,6 @@ public class CarLocationActivity extends AppCompatActivity
     public void onSpotSelected(int id, String sTown) {
         cd.setCurrentLoc(id);
         sCurrentTown = sTown;
-        Log.d("BBB", "onSpotSel sCurTown = " + (sCurrentTown == null ? "NULL" : sCurrentTown));
         done();
     }
 
@@ -112,7 +111,6 @@ public class CarLocationActivity extends AppCompatActivity
             switch (position) {
                 case 0:
                     Bundle bundle = new Bundle();
-                    Log.d("BBB", "frag sCurTown = " + (sCurrentTown == null ? "NULL" : sCurrentTown));
                     bundle.putString(MainActivity.TOWN_NAME, sCurrentTown);
                     android.support.v4.app.Fragment frag = new TownFragment();
                     frag.setArguments(bundle);

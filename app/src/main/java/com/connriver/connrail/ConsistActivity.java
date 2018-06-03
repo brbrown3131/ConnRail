@@ -132,7 +132,7 @@ public class ConsistActivity extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_consist_info, null);
         builder.setView(dialogView);
-        //builder.setTitle(R.string.edit_consist);
+        builder.setTitle(R.string.edit_consist);
 
         final EditText etName = (EditText) dialogView.findViewById(R.id.etConsistName);
         final EditText etDesc = (EditText) dialogView.findViewById(R.id.etConsistDesc);
@@ -258,9 +258,8 @@ public class ConsistActivity extends AppCompatActivity {
     }
 
     private void messageDelete() {
-        String sx = getResources().getString(R.string.msg_delete_sure);
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setMessage(sx);
+        alertDialog.setMessage(getResources().getString(R.string.msg_delete_sure));
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.button_ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -276,8 +275,8 @@ public class ConsistActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
     // launch dialog to select the drop spot
-    // TODO - use current town
     private void manageCar(int index) {
         cdSelected = carsInConsist.getCarData(index);
 

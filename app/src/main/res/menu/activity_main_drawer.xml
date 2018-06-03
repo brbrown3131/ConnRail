@@ -31,11 +31,6 @@
                 <item
                     android:id="@+id/nav_car_status"
                     android:title="@string/menu_car_status" />
-                <item
-                    android:id="@+id/nav_user_list"
-                    android:visible="false"
-                    android:title="@string/menu_user_list" />
-
             </menu>
         </item>
     </group>

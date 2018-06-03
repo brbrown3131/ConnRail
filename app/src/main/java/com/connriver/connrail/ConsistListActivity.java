@@ -53,10 +53,15 @@ public class ConsistListActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        cl.resetList();
-        DBUtils.saveConsistData();
+        update();
         super.onResume();
     }
+
+    private void update() {
+        cl.resetList();
+        DBUtils.saveConsistData();
+    }
+
 
     private boolean dupFound(String sName) {
         // check for duplicate and message if found
@@ -111,6 +116,7 @@ public class ConsistListActivity extends AppCompatActivity {
                 ConsistData cd = new ConsistData(sName, Utils.trim(etDesc));
                 MainActivity.gConsistData.add(cd);
                 ad.dismiss();
+                update();
             }
         });
     }

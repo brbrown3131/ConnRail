@@ -42,7 +42,6 @@ public class CarListActivity extends AppCompatActivity {
                 launchAddEdit(-1);
             }
         });
-
     }
 
     @Override

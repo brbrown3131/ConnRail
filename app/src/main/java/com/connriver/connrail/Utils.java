@@ -1,6 +1,5 @@
 package com.connriver.connrail;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +9,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 
 import static com.connriver.connrail.MainActivity.NONE;
+import static com.connriver.connrail.MainActivity.TAG;
 
 /**
  * Created by bbrown on 3/16/2018.
@@ -24,16 +24,16 @@ public class Utils {
     }
 
     public static void dumpSpotData() {
-        Log.d("DUMP", "Dump Spot ------------------------------");
+        Log.d(TAG, "Dump Spot ------------------------------");
         for (SpotData sd : MainActivity.gSpotData) {
-            Log.d("DUMP", sd.getID() + " " + sd.getTown() + " " + sd.getIndustry() + " " + sd.getTrack());
+            Log.d(TAG, sd.getID() + " " + sd.getTown() + " " + sd.getIndustry() + " " + sd.getTrack());
         }
     }
 
     public static void dumpCarData() {
-        Log.d("DUMP", "Dump Car------------------------------");
+        Log.d(TAG, "Dump Car------------------------------");
         for (CarData cd : MainActivity.gCarData) {
-            Log.d("DUMP", cd.getInitials() + " " + cd.getNumber() + "=Loc:" + cd.getCurrentLoc() + " Consist:" + cd.getConsist() + (cd.getInStorage() ? " Stored" : ""));
+            Log.d(TAG, cd.getInitials() + " " + cd.getNumber() + "=Loc:" + cd.getCurrentLoc() + " Consist:" + cd.getConsist() + (cd.getInStorage() ? " Stored" : ""));
         }
     }
 

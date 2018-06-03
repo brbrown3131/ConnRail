@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_weight=".2"
+            android:layout_weight=".3"
             android:layout_width="0dp"
             android:layout_marginLeft="@dimen/tiny_margin"
             android:text="@string/hint_init"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:layout_weight=".5"
+            android:layout_weight=".4"
             android:layout_width="0dp"
             android:layout_marginLeft="@dimen/tiny_margin"
             android:text="@string/hint_type"
@@ -40,9 +40,9 @@
 
         <EditText
             android:id="@+id/etCarInitials"
-            android:layout_weight=".2"
+            android:layout_weight=".3"
             android:maxLines="1"
-            android:maxLength="4"
+            android:maxLength="6"
             android:inputType="textCapCharacters"
             android:nextFocusDown="@+id/etCarNumber"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -66,7 +66,7 @@
             android:focusableInTouchMode="true"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
+            android:layout_weight=".4"
             android:nextFocusDown="@+id/etCarNotes"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:entries="@array/car_types"
