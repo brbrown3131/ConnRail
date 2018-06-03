@@ -17,7 +17,7 @@
         android:layout_marginLeft="@dimen/small_margin"
         android:layout_marginRight="@dimen/small_margin"
         android:layout_width="match_parent"
-        android:inputType="textCapSentences"
+        android:inputType="textCapWords"
         android:nextFocusDown="@+id/etConsistDesc"
         android:maxLength="16"
         android:layout_height="wrap_content" />

@@ -4,6 +4,7 @@ package com.connriver.connrail;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,12 @@ import java.util.ArrayList;
  */
 public class TownFragment extends Fragment {
     private ListView lv;
-    SpotList sl;
+    private SpotList sl;
     private String sCurrentTown = null;
-    Listener mCallback;
+    private Listener mCallback;
 
     public interface Listener {
-        public void onSpotSelected(int id);
+        void onSpotSelected(int id, String sTown);
     }
 
     @Override
@@ -44,6 +45,10 @@ public class TownFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        sCurrentTown = getArguments().getString(MainActivity.TOWN_NAME);
+        Log.d("BBB", "sCurTown = " + (sCurrentTown == null ? "NULL" : sCurrentTown));
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_town, container, false);
 
@@ -53,6 +58,14 @@ public class TownFragment extends Fragment {
         final ArrayList<String> townList = Utils.getTownList();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
         spTown.setAdapter(adapter);
+        if (sCurrentTown != null) {
+            for (int ix = 1; ix < townList.size(); ix++) {
+                if (townList.get(ix).equals(sCurrentTown)) {
+                    spTown.setSelection(ix);
+                    break;
+                }
+            }
+        }
 
         spTown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -92,8 +105,9 @@ public class TownFragment extends Fragment {
     }
 
     private void setSpot(int pos) {
+        Log.d("BBB", "setSpot sCurTown = " + (sCurrentTown == null ? "NULL" : sCurrentTown));
         SpotData sd = sl.getSpotData(pos);
-        mCallback.onSpotSelected(sd.getID());
+        mCallback.onSpotSelected(sd.getID(), sCurrentTown);
     }
 
 }

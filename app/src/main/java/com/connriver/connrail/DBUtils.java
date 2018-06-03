@@ -1,7 +1,6 @@
 package com.connriver.connrail;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * Created by bbrown on 3/16/2018.
@@ -46,7 +45,6 @@ public class DBUtils {
     }
 
     public static void saveCarData() {
-        Log.d("BBB", "Save Car Data");
         if (iMode == MODE_SINGLE_USER) {
             dbh.saveCarData();
         }

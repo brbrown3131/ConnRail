@@ -15,18 +15,15 @@ public class CarLocationListActivity extends AppCompatActivity {
     private ListView lv;
     private CarList cl;
     private String sTown = null;
-    CarData cdSelected = null;
+    private CarData cdSelected = null;
+    private int iTab = 0;
 
     static final int SET_LOCATION = 1;
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("BBB", "CarLocationListActivity OnResume");
         ArrayList<CarData> carList = Utils.getAllCars(true);
-        for (CarData cd : carList) {
-            Log.d("BBB", "Car:" + cd.getInfo() + " = " + (cd.getInStorage() ? "Stored" : ""));
-        }
     }
 
     private void resetList() {
@@ -78,6 +75,7 @@ public class CarLocationListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CarLocationActivity.class);
         intent.putExtra(MainActivity.CAR_DATA, cdSelected);
         intent.putExtra(MainActivity.TOWN_NAME, sTown);
+        intent.putExtra(MainActivity.CURRENT_TAB, iTab);
         startActivityForResult(intent, SET_LOCATION);
     }
 
@@ -85,6 +83,8 @@ public class CarLocationListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SET_LOCATION && resultCode == RESULT_OK) {
             CarData cd = (CarData) data.getSerializableExtra(MainActivity.CAR_DATA);
+            iTab = data.getIntExtra(MainActivity.CURRENT_TAB, 0);
+            sTown = data.getStringExtra(MainActivity.TOWN_NAME);
             cdSelected.copyLocation(cd);
             DBUtils.saveCarData();
             resetList();

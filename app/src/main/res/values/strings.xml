@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Conn Rail</string>
 
-    <string name="session_num">Day/Session Number:</string>
-    <string name="new_session">New Day/Session</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+
+    <string name="session_num">Day Number:</string>
+    <string name="new_session">New Day</string>
     <string name="alerts">Alerts</string>
     <string name="no_alerts">No Alerts</string>
     <string name="car">car</string>
@@ -29,7 +32,7 @@
     <string name="text_days">days</string>
     <!-- } Generic text { -->
 
-    <string name="action_network_settings">Network Settings</string>
+    <string name="action_network_settings">Data Settings</string>
     <string name="action_end">End</string>
 
     <!-- App Menus { -->
@@ -144,13 +147,13 @@
     <string name="current_town">Current City/Town</string>
 
     <string name="show_all_cars">Show all cars</string>
-    <string name="days_to_hold">Days/Sessions\nto hold car: </string>
+    <string name="days_to_hold">Days to hold car: </string>
 
     <string name="all">[All]</string>
 
     <string name="import_db">Import Database File</string>
     <string name="export_db">Export Database File</string>
-    <string name="export_done">Export complete to file:\n</string>
-    <string name="import_done">Import complete from file:\n</string>
-
+    <string name="export_done">Export complete</string>
+    <string name="import_done">Import complete</string>
+    <string name="import_empty">Import file is empty</string>
 </resources>

@@ -64,7 +64,7 @@ public class ConsistListActivity extends AppCompatActivity {
         for (int ix = 0; ix < MainActivity.gConsistData.size(); ix++) {
             cd = MainActivity.gConsistData.get(ix);
             if (sName.equals(cd.getName())) {
-                Utils.messageBox(null, getResources().getString(R.string.msg_duplicate_consist), this) ;
+                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_consist), this) ;
                 return true;
             }
         }
@@ -73,7 +73,7 @@ public class ConsistListActivity extends AppCompatActivity {
 
     private boolean badName(String sName) {
         if (sName.isEmpty()) {
-            Utils.messageBox(null, getResources().getString(R.string.msg_bad_consist_name), this);
+            Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_bad_consist_name), this);
             return true;
         }
         return false;

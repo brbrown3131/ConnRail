@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String PARENT_TRAIN = "TrainMaster";
     public static final String PREFS_NAME = "ConnRailPrefs";
     public static final String SESSION_NUMBER = "SessionNumber";
+    public static final String CURRENT_TAB = "CurrentTab";
 
     private ListView lvAlerts;
     private static ArrayList<AlertData> alerts = new ArrayList<>();

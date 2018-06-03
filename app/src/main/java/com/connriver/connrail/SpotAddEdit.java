@@ -189,7 +189,7 @@ public class SpotAddEdit extends AppCompatActivity {
             if (ix != ixEdit) { // ignore the currently edited
                 sd = MainActivity.gSpotData.get(ix);
                 if (sTown.equals(sd.getTown()) && sInd.equals(sd.getIndustry()) && sTrack.equals(sd.getTrack())) {
-                    Utils.messageBox(null, getResources().getString(R.string.msg_duplicate_spot), this);
+                    Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_spot), this);
                     return true;
                 }
             }

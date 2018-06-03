@@ -412,7 +412,7 @@ public class CarAddEdit extends AppCompatActivity {
             if (ix != ixEdit) { // ignore the currently edited
                 cd = MainActivity.gCarData.get(ix);
                 if (init.equals(cd.getInitials()) && num.equals(cd.getNumber())) {
-                    Utils.messageBox(null, getResources().getString(R.string.msg_duplicate_car), this);
+                    Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_car), this);
                     return true;
                 }
             }
@@ -425,13 +425,13 @@ public class CarAddEdit extends AppCompatActivity {
 
         // return true if there are fewer than 2 spots
         if (size < 2) {
-            Utils.messageBox(null, getResources().getString(R.string.msg_minimum_two), this);
+            Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_minimum_two), this);
             return true;
         }
 
         // return true if first and last same spot
         if (listCarSpotData.get(0).getID() == listCarSpotData.get(size - 1).getID()) {
-            Utils.messageBox(null, getResources().getString(R.string.msg_first_last), this);
+            Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_first_last), this);
             return true;
         }
 
@@ -439,7 +439,7 @@ public class CarAddEdit extends AppCompatActivity {
         int prevID = listCarSpotData.get(0).getID();
         for (int ix = 1; ix < size; ix++) {
             if (listCarSpotData.get(ix).getID() == prevID) {
-                Utils.messageBox(null, getResources().getString(R.string.msg_diff_seq), this);
+                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_diff_seq), this);
                 return true;
             }
             prevID = listCarSpotData.get(ix).getID();
