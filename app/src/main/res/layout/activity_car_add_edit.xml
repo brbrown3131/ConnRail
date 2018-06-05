@@ -1,144 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.connriver.connrail.CarAddEdit">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.connriver.connrail.CarAddEdit"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/small_margin"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/small_margin"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_weight=".3"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/tiny_margin"
+                android:text="@string/hint_init"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_weight=".3"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/tiny_margin"
+                android:text="@string/hint_num"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_weight=".4"
+                android:layout_width="0dp"
+                android:layout_marginLeft="@dimen/tiny_margin"
+                android:text="@string/hint_type"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etCarInitials"
+                android:layout_weight=".3"
+                android:maxLines="1"
+                android:maxLength="6"
+                android:inputType="textCapCharacters"
+                android:nextFocusDown="@+id/etCarNumber"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/etCarNumber"
+                android:layout_weight=".3"
+                android:inputType="number"
+                android:maxLines="1"
+                android:maxLength="8"
+                android:nextFocusDown="@+id/spinCarType"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <com.connriver.connrail.SpinnerPlus
+                android:id="@+id/spinCarType"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".4"
+                android:nextFocusDown="@+id/etCarNotes"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:entries="@array/car_types"
+                android:prompt="@string/hint_type"/>
+
+        </LinearLayout>
 
         <TextView
-            android:layout_weight=".3"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:layout_marginLeft="@dimen/tiny_margin"
-            android:text="@string/hint_init"
+            android:text="@string/hint_notes"
             android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_weight=".3"
-            android:layout_width="0dp"
-            android:layout_marginLeft="@dimen/tiny_margin"
-            android:text="@string/hint_num"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_weight=".4"
-            android:layout_width="0dp"
-            android:layout_marginLeft="@dimen/tiny_margin"
-            android:text="@string/hint_type"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/etCarInitials"
-            android:layout_weight=".3"
+            android:id="@+id/etCarNotes"
             android:maxLines="1"
-            android:maxLength="6"
-            android:inputType="textCapCharacters"
-            android:nextFocusDown="@+id/etCarNumber"
+            android:inputType="textCapSentences"
+            android:maxLength="32"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="0dp"
+            android:nextFocusDown="@+id/btnCarSave"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/etCarNumber"
-            android:layout_weight=".3"
-            android:inputType="number"
-            android:maxLines="1"
-            android:maxLength="8"
-            android:nextFocusDown="@+id/spinCarType"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+        <TextView
+            android:text="@string/hint_spots"
+            android:layout_marginLeft="@dimen/tiny_margin"
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-        <com.connriver.connrail.SpinnerPlus
-            android:id="@+id/spinCarType"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:layout_width="0dp"
+        <ListView
+            android:id="@+id/lvCarSpots"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="@dimen/small_margin"
+            android:paddingRight="@dimen/small_margin"/>
+
+        <Button
+            android:id="@+id/btnSpotAdd"
+            android:layout_width="match_parent"
+            android:layout_margin="@dimen/small_margin"
             android:layout_height="wrap_content"
-            android:layout_weight=".4"
-            android:nextFocusDown="@+id/etCarNotes"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:entries="@array/car_types"
-            android:prompt="@string/hint_type"/>
+            android:drawableLeft="@android:drawable/ic_menu_add"
+            android:text="@string/button_add_spot"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnCarSave"
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                android:enabled="false"
+                android:layout_height="wrap_content"
+                android:text="@string/button_save"/>
+            <Button
+                android:id="@+id/btnCarDelete"
+                android:layout_width="0dp"
+                android:layout_weight=".5"
+                android:enabled="false"
+                android:layout_height="wrap_content"
+                android:text="@string/button_delete"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/tiny_margin"
-        android:text="@string/hint_notes"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:id="@+id/etCarNotes"
-        android:maxLines="1"
-        android:inputType="textCapSentences"
-        android:maxLength="32"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:nextFocusDown="@+id/btnCarSave"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:text="@string/hint_spots"
-        android:layout_marginLeft="@dimen/tiny_margin"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <ListView
-        android:id="@+id/lvCarSpots"
-        android:layout_weight="0"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/small_margin"
-        android:paddingRight="@dimen/small_margin"/>
-
-    <Button
-        android:id="@+id/btnSpotAdd"
-        android:layout_width="match_parent"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@android:drawable/ic_menu_add"
-        android:text="@string/button_add_spot"/>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center|bottom"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/btnCarSave"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:layout_height="wrap_content"
-            android:text="@string/button_save"/>
-        <Button
-            android:id="@+id/btnCarDelete"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:enabled="false"
-            android:layout_height="wrap_content"
-            android:text="@string/button_delete"/>
-
-    </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>

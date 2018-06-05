@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -142,7 +143,7 @@ public class CarAddEdit extends AppCompatActivity {
         btnAddSpot = (Button) findViewById(R.id.btnSpotAdd);
         btnAddSpot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                onAddSpotClicked();
+                onAddSpotClicked(v);
             }
         });
 
@@ -301,6 +302,7 @@ public class CarAddEdit extends AppCompatActivity {
 
         final AlertDialog ad = builder.create();
         ad.show();
+        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 
     // enable the save button if all requirements met
@@ -356,10 +358,14 @@ public class CarAddEdit extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void onAddSpotClicked() {
+    private void onAddSpotClicked(View view) {
         if (lvCarSpots.getCount() >= CARDATA_SPOT_MAX) {
             return;
         }
+
+        // hide the keyboard, if showing
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
         //launch spot list dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);

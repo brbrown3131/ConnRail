@@ -1,358 +1,361 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.connriver.connrail.CarInfoActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.connriver.connrail.CarInfoActivity"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 
-    <View
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/small_margin" >
-    </View>
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-     <LinearLayout
-        android:id="@+id/llCurrent"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/small_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/small_margin" >
+        </View>
 
          <LinearLayout
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:orientation="horizontal">
+            android:id="@+id/llCurrent"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-             <ImageView
-                 android:layout_width="wrap_content"
-                 android:layout_height="match_parent"
-                 android:src="@drawable/ic_crosshairs_gps"/>
-             <TextView
+             <LinearLayout
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
-                 android:text="@string/current_location" />
+                 android:orientation="horizontal">
 
-         </LinearLayout>
+                 <ImageView
+                     android:layout_width="wrap_content"
+                     android:layout_height="match_parent"
+                     android:src="@drawable/ic_crosshairs_gps"/>
+                 <TextView
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:text="@string/current_location" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
+             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/town" />
-            <TextView
-                android:id="@+id/cur_town"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/town" />
+                <TextView
+                    android:id="@+id/cur_town"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="Town" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Town" />
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/industry" />
+                <TextView
+                    android:id="@+id/cur_industry"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="Industry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/track" />
+                <TextView
+                    android:id="@+id/cur_track"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="Track" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/llNoCurrent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/industry" />
-            <TextView
-                android:id="@+id/cur_industry"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="Industry" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/track" />
-            <TextView
-                android:id="@+id/cur_track"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="Track" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/llNoCurrent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_error"/>
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:text="@string/no_current_defined"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/llConsist"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_train"/>
-
-        <TextView
-            android:id="@+id/tvConsistName"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:layout_width="0dp"
-            android:layout_weight=".4"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:text="[name]"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/tvConsistDescription"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="[description]"
-            android:layout_width="0dp"
-            android:layout_weight=".6"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/small_margin" >
-    </View>
-
-    <LinearLayout
-        android:id="@+id/llDestination"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/small_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_forward"/>
+                android:src="@drawable/ic_error"/>
 
             <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/destination" />
-
+                android:text="@string/no_current_defined"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/town" />
-            <TextView
-                android:id="@+id/dest_town"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="Town" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/industry" />
-            <TextView
-                android:id="@+id/dest_industry"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="Industry" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/track" />
-            <TextView
-                android:id="@+id/dest_track"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="Track" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llDestLading"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/lading" />
-            <TextView
-                android:id="@+id/tvDestLading"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="[lading]" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/llDestInstructions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".3"
-                android:gravity="right"
-                android:layout_height="wrap_content"
-                android:text="@string/instructions" />
-            <TextView
-                android:id="@+id/tvDestInstructions"
-                android:layout_marginLeft="@dimen/small_margin"
-                android:layout_width="0dp"
-                android:layout_weight=".7"
-                android:layout_height="wrap_content"
-                android:text="[inst]" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btnDeliver"
+            android:id="@+id/llConsist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_margin"
-            android:enabled="true"
-            android:text="@string/deliver" />
+            android:visibility="gone"
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_train"/>
+
+            <TextView
+                android:id="@+id/tvConsistName"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_weight=".4"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="[name]"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tvConsistDescription"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="[description]"
+                android:layout_width="0dp"
+                android:layout_weight=".6"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/small_margin" >
+        </View>
+
+        <LinearLayout
+            android:id="@+id/llDestination"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_forward"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/destination" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/town" />
+                <TextView
+                    android:id="@+id/dest_town"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="Town" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/industry" />
+                <TextView
+                    android:id="@+id/dest_industry"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="Industry" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/track" />
+                <TextView
+                    android:id="@+id/dest_track"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="Track" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llDestLading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lading" />
+                <TextView
+                    android:id="@+id/tvDestLading"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="[lading]" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llDestInstructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".3"
+                    android:gravity="right"
+                    android:layout_height="wrap_content"
+                    android:text="@string/instructions" />
+                <TextView
+                    android:id="@+id/tvDestInstructions"
+                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_width="0dp"
+                    android:layout_weight=".7"
+                    android:layout_height="wrap_content"
+                    android:text="[inst]" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnDeliver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="true"
+                android:text="@string/deliver" />
+
+        </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/llErrDest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_margin="@dimen/small_margin"
-        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/llErrDest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_margin="@dimen/small_margin"
+            android:orientation="horizontal">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_error"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_error"/>
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:text="@string/err_spots_defined"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llHold"
+            android:layout_margin="@dimen/small_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_hold"/>
+
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:text="@string/hold_car"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:background="@android:color/darker_gray"/>
 
         <TextView
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="@dimen/small_margin"
             android:layout_width="match_parent"
-            android:text="@string/err_spots_defined"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:text="@string/setout_desc" />
 
-    <LinearLayout
-        android:id="@+id/llHold"
-        android:layout_margin="@dimen/small_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_hold"/>
-
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceSmall"
+        <Button
+            android:id="@+id/btnSetout"
             android:layout_width="match_parent"
-            android:text="@string/hold_car"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:text="@string/setout" />
+
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/small_margin"
-        android:layout_marginBottom="@dimen/small_margin"
-        android:background="@android:color/darker_gray"/>
-
-    <TextView
-        android:layout_marginLeft="@dimen/small_margin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/setout_desc" />
-
-    <Button
-        android:id="@+id/btnSetout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_horizontal_margin"
-        android:text="@string/setout" />
-
-
-</LinearLayout>
+</ScrollView>

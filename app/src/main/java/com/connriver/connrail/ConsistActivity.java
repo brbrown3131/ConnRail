@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -148,6 +149,7 @@ public class ConsistActivity extends AppCompatActivity {
 
         final AlertDialog ad = builder.create();
         ad.show();
+        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         Button ok = ad.getButton(AlertDialog.BUTTON_POSITIVE);
         ok.setOnClickListener(new View.OnClickListener() {
