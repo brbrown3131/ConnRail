@@ -41,10 +41,13 @@ public class CarAddEdit extends AppCompatActivity {
     private boolean bTypeFocusIn = false;
     private boolean bCarSpotDataChanged = false;
 
-    ListView lvCarSpots;
-    private ArrayList<CarSpotData> listCarSpotData;
+    private ListView lvCarSpots;
+    private ArrayList<CarSpotData> listCarSpotData = null;
 
     private AlertDialog adAddSpot = null;
+
+    private static String SPOTLIST = "SpotList";
+    private static String DATACHANGED = "DataChanged";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,9 +188,18 @@ public class CarAddEdit extends AppCompatActivity {
             etNotes.setText(cdEdit.getNotes());
         }
 
+        // if re-create after screen rotation, load the saved copy of car spot and boolean
+        if (savedInstanceState != null) {
+            listCarSpotData = (ArrayList<CarSpotData>)savedInstanceState.getSerializable(SPOTLIST);
+            bCarSpotDataChanged = savedInstanceState.getBoolean(DATACHANGED);
+            updateSaveButton();
+        }
+
         // create/init the list of car spots
         // get a copy of the CarSpotData list from the CarData
-        listCarSpotData = cdEdit.getCarSpotDataCopy();
+        if (listCarSpotData == null) {
+            listCarSpotData = cdEdit.getCarSpotDataCopy();
+        }
 
         // ListView Item Click Listener
         updateSpotList();
@@ -200,10 +212,40 @@ public class CarAddEdit extends AppCompatActivity {
 
     }
 
+    // on screen rotate save the current spot list
+    public void onSaveInstanceState(Bundle savedState) {
+        super.onSaveInstanceState(savedState);
+        savedState.putSerializable(SPOTLIST, listCarSpotData);
+        savedState.putBoolean(DATACHANGED, bCarSpotDataChanged);
+    }
+
     private void updateSpotList() {
         CarSpotDataAdapter adapter = new CarSpotDataAdapter(this, listCarSpotData);
         lvCarSpots.setAdapter(adapter);
+
+        setListHeight(adapter);
+
         btnAddSpot.setEnabled(listCarSpotData.size() < CARDATA_SPOT_MAX);
+    }
+
+    private void setListHeight(CarSpotDataAdapter adapter) {
+        int numberOfItems = adapter.getCount();
+
+        // Get total height of all items.
+        int totalItemsHeight = 0;
+        for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+            View item = adapter.getView(itemPos, null, lvCarSpots);
+            item.measure(0, 0);
+            totalItemsHeight += item.getMeasuredHeight();
+        }
+
+        // Get total height of all item dividers.
+        int totalDividersHeight = lvCarSpots.getDividerHeight() * (numberOfItems - 1);
+
+        // Set list height.
+        ViewGroup.LayoutParams params = lvCarSpots.getLayoutParams();
+        params.height = totalItemsHeight + totalDividersHeight;
+        lvCarSpots.setLayoutParams(params);
     }
 
     @Override
