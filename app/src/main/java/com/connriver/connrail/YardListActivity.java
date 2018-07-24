@@ -28,7 +28,7 @@ public class YardListActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.carListView);
         Spinner spTown = (Spinner) findViewById(R.id.spTown);
         //fill the spinner list of towns
-        final ArrayList<String> townList = Utils.getTownList();
+        final ArrayList<String> townList = Utils.getTownList(true);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, townList);
         spTown.setAdapter(adapter);
 

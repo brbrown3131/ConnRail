@@ -54,7 +54,7 @@ public class TownFragment extends Fragment {
         Spinner spTown = (Spinner) view.findViewById(R.id.spTown);
 
         //fill the spinner list of towns
-        final ArrayList<String> townList = Utils.getTownList();
+        final ArrayList<String> townList = Utils.getTownList(true);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
         spTown.setAdapter(adapter);
         if (sCurrentTown != null) {

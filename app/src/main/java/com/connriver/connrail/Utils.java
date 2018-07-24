@@ -64,9 +64,11 @@ public class Utils {
     }
 
     // get the list of all towns
-    public static ArrayList<String> getTownList() {
+    public static ArrayList<String> getTownList(boolean bAddAll) {
         ArrayList<String> townList = new ArrayList<>();
-        townList.add(context.getResources().getString(R.string.all));
+        if (bAddAll) {
+            townList.add(context.getResources().getString(R.string.all));
+        }
         String sLast = "";
         String sTown;
         for (SpotData sd : MainActivity.gSpotData) {

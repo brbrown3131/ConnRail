@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,7 +33,7 @@ public class CarAddEdit extends AppCompatActivity {
     private int ixEdit = -1;
     private EditText etInit;
     private EditText etNum;
-    private SpinnerPlus spType;
+    private AutoCompleteTextView actvType;
     private EditText etNotes;
     private Button btnAddSpot;
     private Button btnSave;
@@ -57,7 +58,12 @@ public class CarAddEdit extends AppCompatActivity {
 
         etInit = (EditText) findViewById(R.id.etCarInitials);
         etNum = (EditText) findViewById(R.id.etCarNumber);
-        spType = (SpinnerPlus) findViewById(R.id.spinCarType);
+        actvType = (AutoCompleteTextView) findViewById(R.id.actvCarType);
+        actvType.setThreshold(1);
+        String[] types = getResources().getStringArray(R.array.car_types);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, types);
+        actvType.setAdapter(adapter);
+
         etNotes = (EditText) findViewById(R.id.etCarNotes);
         lvCarSpots = (ListView) findViewById(R.id.lvCarSpots);
 
@@ -101,15 +107,13 @@ public class CarAddEdit extends AppCompatActivity {
             }
         });
 
-        etNum.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        // automatically show the list if blank
+        actvType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public boolean onEditorAction(TextView view, int actionID, KeyEvent event) {
-                if (actionID == EditorInfo.IME_ACTION_NEXT) {
-                    bTypeFocusIn = true;
-                    spType.performClick();
-                    return true;
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && actvType.getText().length() == 0) {
+                    actvType.showDropDown();
                 }
-                return false;
             }
         });
 
@@ -127,19 +131,16 @@ public class CarAddEdit extends AppCompatActivity {
             }
         });
 
-        spType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
+        actvType.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
                 updateSaveButton();
-                if (bTypeFocusIn) {
-                    etNotes.requestFocus();
-                    bTypeFocusIn = false;
-                }
             }
-
             @Override
-            public void onNothingSelected(AdapterView<?> parentView) {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
 
@@ -172,19 +173,7 @@ public class CarAddEdit extends AppCompatActivity {
             cdEdit = MainActivity.gCarData.get(ixEdit);
             etInit.setText(cdEdit.getInitials());
             etNum.setText(cdEdit.getNumber());
-
-            int ixType = 0;
-            String sType = cdEdit.getType();
-            for ( ; ixType < spType.getCount(); ixType++) {
-                if (spType.getItemAtPosition(ixType).equals(sType)) {
-                    break;
-                }
-            }
-            if (ixType == spType.getCount()) {
-                ixType--;
-            }
-            spType.setSelection(ixType);
-
+            actvType.setText(cdEdit.getType());
             etNotes.setText(cdEdit.getNotes());
         }
 
@@ -324,6 +313,7 @@ public class CarAddEdit extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.dialog_car_spot_info, null);
         builder.setView(dialogView);
+        builder.setTitle(R.string.lading_title);
 
         final EditText etLading = (EditText) dialogView.findViewById(R.id.etLading);
         final EditText etInstruct = (EditText) dialogView.findViewById(R.id.etInstruct);
@@ -352,7 +342,7 @@ public class CarAddEdit extends AppCompatActivity {
         String sInit = Utils.trim(etInit);
         String sNum = Utils.trim(etNum);
         String sNotes = Utils.trim(etNotes);
-        String sType = spType.getSelectedItem().toString();
+        String sType = Utils.trim(actvType);
         btnSave.setEnabled(sInit.length() > 0 && sNum.length() > 0 &&
                 (!sInit.equals(cdEdit.getInitials()) ||
                 !sNum.equals(cdEdit.getNumber()) ||
@@ -507,9 +497,8 @@ public class CarAddEdit extends AppCompatActivity {
 
         cdEdit.setInitials(Utils.trim(etInit));
         cdEdit.setNumber(Utils.trim(etNum));
-        cdEdit.setType(spType.getSelectedItem().toString());
+        cdEdit.setType(Utils.trim(actvType));
         cdEdit.setNotes(Utils.trim(etNotes));
-
         cdEdit.setCarSpotData(listCarSpotData);
 
         if (ixEdit == -1) { // add new

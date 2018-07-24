@@ -11,6 +11,7 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
         WebView wv = (WebView) findViewById(R.id.helpView);
+        wv.getSettings().setBuiltInZoomControls(true);
         wv.loadUrl("file:///android_asset/help.html");
     }
 }

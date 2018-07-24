@@ -80,7 +80,7 @@ public class DialogFragmentCarList extends DialogFragment {
         // if we want to display the list of towns to choose from
         if (bShowCurrentTown) {
             //fill the spinner list of towns
-            final ArrayList<String> townList = Utils.getTownList();
+            final ArrayList<String> townList = Utils.getTownList(true);
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
             spTown.setAdapter(adapter);
 

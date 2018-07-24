@@ -62,7 +62,6 @@
     <string name="hint_init">Initials</string>
     <string name="hint_num">Number</string>
     <string name="hint_type">Type</string>
-    <string name="hint_lading">Lading (optional)</string>
     <string name="hint_notes">Notes (optional)</string>
     <string name="hint_spots">Spots/Destinations</string>
     <string name="select_spot">Select Spot</string>
@@ -79,7 +78,6 @@
         <item>Stock Car</item>
         <item>Tank Car</item>
         <item>TOFC</item>
-        <item>Other</item>
     </string-array>
 
     <string name="msg_duplicate_car">Car already exists</string>
@@ -102,7 +100,6 @@
     <string name="hint_town">City/Town</string>
     <string name="hint_industry">Industry</string>
     <string name="hint_track">Track</string>
-    <string name="hint_instructions">Instructions (optional)</string>
 
     <string name="town">City/Town:</string>
     <string name="industry">Industry:</string>
@@ -111,7 +108,7 @@
     <string name="instructions">Instructions:</string>
     <string name="lading2">Lading</string>
     <string name="instructions2">Instructions</string>
-
+    <string name="lading_title">Lading/Instructions</string>
     <!-- } Spot Add/Edit -->
 
     <!-- Car Location { -->

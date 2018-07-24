@@ -9,12 +9,16 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+
 public class SpotAddEdit extends AppCompatActivity {
     private int ixEdit = -1;
-    private EditText etTown;
+    private AutoCompleteTextView actvTown;
     private EditText etIndustry;
     private EditText etTrack;
     private Button btnSave;
@@ -30,7 +34,12 @@ public class SpotAddEdit extends AppCompatActivity {
 
         setContentView(R.layout.activity_spot_add_edit);
 
-        etTown = (EditText) findViewById(R.id.etSpotTown);
+        actvTown = (AutoCompleteTextView) findViewById(R.id.actvSpotTown);
+        actvTown.setThreshold(1);
+        final ArrayList<String> townList = Utils.getTownList(false);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, townList);
+        actvTown.setAdapter(adapter);
+
         etIndustry = (EditText) findViewById(R.id.etSpotIndustry);
         etTrack = (EditText) findViewById(R.id.etSpotTrack);
 
@@ -52,26 +61,27 @@ public class SpotAddEdit extends AppCompatActivity {
         if (ixEdit != -1) {
             btnDelete.setEnabled(true);
             sdEdit = MainActivity.gSpotData.get(ixEdit);
-            etTown.setText(sdEdit.getTown());
+            actvTown.setText(sdEdit.getTown());
             etIndustry.setText(sdEdit.getIndustry());
             etTrack.setText(sdEdit.getTrack());
         }
 
         // automatically show the keyboard on a new but not an edit
-        etTown.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        actvTown.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    if (etTown.getText().length() == 0) {
+                    if (actvTown.getText().length() == 0) {
                         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
                     } else {
                         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                        actvTown.dismissDropDown();
                     }
                 }
             }
         });
 
-        etTown.addTextChangedListener(new TextWatcher() {
+        actvTown.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 btnSave.setEnabled(len(s) > 0);
@@ -87,7 +97,7 @@ public class SpotAddEdit extends AppCompatActivity {
         etIndustry.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnSave.setEnabled(Utils.len(etTown) > 0);
+                btnSave.setEnabled(Utils.len(actvTown) > 0);
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -100,7 +110,7 @@ public class SpotAddEdit extends AppCompatActivity {
         etTrack.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnSave.setEnabled(Utils.len(etTown) > 0);
+                btnSave.setEnabled(Utils.len(actvTown) > 0);
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -182,7 +192,7 @@ public class SpotAddEdit extends AppCompatActivity {
     private boolean dupFound() {
         // check for duplicate and message if found
         SpotData sd;
-        String sTown = Utils.trim(etTown);
+        String sTown = Utils.trim(actvTown);
         String sInd = Utils.trim(etIndustry);
         String sTrack = Utils.trim(etTrack);
         for (int ix = 0; ix < MainActivity.gSpotData.size(); ix++) {
@@ -207,7 +217,7 @@ public class SpotAddEdit extends AppCompatActivity {
             sdEdit = new SpotData();
         }
 
-        sdEdit.setTown(Utils.trim(etTown));
+        sdEdit.setTown(Utils.trim(actvTown));
         sdEdit.setIndustry(Utils.trim(etIndustry));
         sdEdit.setTrack(Utils.trim(etTrack));
 
