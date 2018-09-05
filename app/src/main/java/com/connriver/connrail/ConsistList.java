@@ -16,10 +16,12 @@ public class ConsistList {
 
     private ListView lv;
     Context context;
+    private ArrayList<ConsistData> consistListData; // car list to use
 
-    public ConsistList(ListView lv, Context context) {
+    public ConsistList(ListView lv, Context context, ArrayList<ConsistData> consistListData) {
         this.lv = lv;
         this.context = context;
+        this.consistListData = consistListData;
     }
 
     private class CustomComparator implements Comparator<ConsistData> {
@@ -30,11 +32,15 @@ public class ConsistList {
         }
     }
 
+    public ConsistData getConsistData(int index) {
+        return consistListData.get(index);
+    }
+
     public void resetList() {
         //sort the list
-        Collections.sort(MainActivity.gConsistData, new CustomComparator());
+        Collections.sort(consistListData, new CustomComparator());
 
-        ConsistDataAdapter adapter = new ConsistDataAdapter(context, MainActivity.gConsistData);
+        ConsistDataAdapter adapter = new ConsistDataAdapter(context, consistListData);
         lv.setAdapter(adapter);
 
     }

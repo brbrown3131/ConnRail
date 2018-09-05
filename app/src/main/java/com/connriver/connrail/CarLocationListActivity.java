@@ -1,7 +1,11 @@
 package com.connriver.connrail;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +13,11 @@ import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import java.util.ArrayList;
+
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_SPOT_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
 
 public class CarLocationListActivity extends AppCompatActivity {
 
@@ -19,12 +28,6 @@ public class CarLocationListActivity extends AppCompatActivity {
     private int iTab = 0;
 
     static final int SET_LOCATION = 1;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ArrayList<CarData> carList = Utils.getAllCars(true);
-    }
 
     private void resetList() {
         // get all the cars. town selected will only be used to pass to spot selection
@@ -64,6 +67,26 @@ public class CarLocationListActivity extends AppCompatActivity {
         });
     }
 
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // just reset the list on any change
+            resetList();
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+    }
+
     private void selectSpot(int ixCarData) {
         // get which car is selected
         cdSelected = cl.getCarData(ixCarData);
@@ -85,8 +108,9 @@ public class CarLocationListActivity extends AppCompatActivity {
             CarData cd = (CarData) data.getSerializableExtra(MainActivity.CAR_DATA);
             iTab = data.getIntExtra(MainActivity.CURRENT_TAB, 0);
             sTown = data.getStringExtra(MainActivity.TOWN_NAME);
-            cdSelected.copyLocation(cd);
-            DBUtils.saveCarData();
+
+            MainActivity.carAddEditDelete(cd, false);
+
             resetList();
         }
     }

@@ -53,10 +53,6 @@ public class DBHandler {
             return;
         }
 
-        //BBB
-        //DB.execSQL("DROP TABLE " + CAR_DATA_TABLE); //to kill a table
-        //DB.execSQL("DROP TABLE " + SPOT_DATA_TABLE); //to kill a table
-
         DB.execSQL("CREATE TABLE IF NOT EXISTS " + CAR_DATA_TABLE +
                     " (Initials TEXT, Number TEXT, Type TEXT, Notes TEXT," +
                     " Spot1 INTEGER, Hold1 INTEGER, Lading1 TEXT, Instructions1 Text," +
@@ -75,6 +71,7 @@ public class DBHandler {
     // Car Data ===================================================================================
 
     public void loadCarData() {
+        MainActivity.getCarList().clear();
         Cursor cursor = DB.rawQuery("SELECT * FROM " + CAR_DATA_TABLE, null);
         CarData cd;
         ArrayList<CarSpotData> listSpots = new ArrayList<>(); // local list of delivery spots
@@ -112,7 +109,7 @@ public class DBHandler {
                     cd.setInStorage();
                 }
 
-                MainActivity.gCarData.add(cd);
+                MainActivity.getCarList().add(cd);
 
             } while (cursor.moveToNext());
         }
@@ -125,7 +122,7 @@ public class DBHandler {
         CarSpotData dummySpot = new CarSpotData(NONE, NONE);
 
         DB.execSQL("DELETE FROM " + CAR_DATA_TABLE);
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             isInStorage = cd.getInStorage() ? 1 : 0;
 
             listSpots = cd.getCarSpotDataCopy();
@@ -148,6 +145,7 @@ public class DBHandler {
     // Spot Data ===================================================================================
 
     public void loadSpotData() {
+        MainActivity.getSpotList().clear();
         Cursor cursor = DB.rawQuery("SELECT * FROM " + SPOT_DATA_TABLE, null);
         SpotData sd;
         if (cursor.moveToFirst())
@@ -160,7 +158,7 @@ public class DBHandler {
                 sd.setIndustry(cursor.getString(cursor.getColumnIndex("Industry")));
                 sd.setTrack(cursor.getString(cursor.getColumnIndex("Track")));
 
-                MainActivity.gSpotData.add(sd);
+                MainActivity.getSpotList().add(sd);
 
             } while (cursor.moveToNext());
         }
@@ -168,10 +166,8 @@ public class DBHandler {
     }
 
     public void saveSpotData() {
-        SpotData sd;
         DB.execSQL("DELETE FROM " + SPOT_DATA_TABLE);
-        for (int ix = 0; ix < MainActivity.gSpotData.size(); ix++) {
-            sd = MainActivity.gSpotData.get(ix);
+        for (SpotData sd : MainActivity.getSpotList()) {
             DB.execSQL("INSERT INTO " + SPOT_DATA_TABLE + " Values ('" + sd.getID() + "','" + PX(sd.getTown()) + "','" + PX(sd.getIndustry()) + "','" + PX(sd.getTrack()) + "');");
         }
     }
@@ -179,6 +175,7 @@ public class DBHandler {
     // Consist Data ===================================================================================
 
     public void loadConsistData() {
+        MainActivity.getConsistList().clear();
         Cursor cursor = DB.rawQuery("SELECT * FROM " + CONSIST_DATA_TABLE, null);
 
         ConsistData cd;
@@ -191,7 +188,7 @@ public class DBHandler {
                 cd.setName(cursor.getString(cursor.getColumnIndex("Name")));
                 cd.setDescription(cursor.getString(cursor.getColumnIndex("Description")));
 
-                MainActivity.gConsistData.add(cd);
+                MainActivity.getConsistList().add(cd);
 
             } while (cursor.moveToNext());
         }
@@ -199,10 +196,8 @@ public class DBHandler {
     }
 
     public void saveConsistData() {
-        ConsistData cd;
         DB.execSQL("DELETE FROM " + CONSIST_DATA_TABLE);
-        for (int ix = 0; ix < MainActivity.gConsistData.size(); ix++) {
-            cd = MainActivity.gConsistData.get(ix);
+        for (ConsistData cd : MainActivity.getConsistList()) {
             DB.execSQL("INSERT INTO " + CONSIST_DATA_TABLE + " Values ('" + cd.getID() + "','" + PX(cd.getName()) + "','" + PX(cd.getDescription()) + "');");
         }
     }

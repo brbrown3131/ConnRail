@@ -1,6 +1,10 @@
 package com.connriver.connrail;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,12 +15,19 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_SPOT_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
+
 public class YardListActivity extends AppCompatActivity {
 
     private ListView lv;
     private CarList cl;
-    CarData cdSelected = null;
-    String sCurrentTown = null;
+    private CarData cdSelected = null;
+    private String sCurrentTown = null;
+    private Spinner spTown;
+    private ArrayList<String> townList;
 
     static final int SET_CAR_INFO = 1;
 
@@ -26,11 +37,12 @@ public class YardListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_yard_list);
 
         lv = (ListView) findViewById(R.id.carListView);
-        Spinner spTown = (Spinner) findViewById(R.id.spTown);
-        //fill the spinner list of towns
-        final ArrayList<String> townList = Utils.getTownList(true);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, townList);
-        spTown.setAdapter(adapter);
+
+        spTown = (Spinner) findViewById(R.id.spTown);
+
+        fillTownList();
+
+        fillCarList(sCurrentTown);
 
         spTown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -58,7 +70,36 @@ public class YardListActivity extends AppCompatActivity {
         });
     }
 
-     // based on which town selected, display what cars are in that town
+    private void fillTownList() {
+        //fill the spinner list of towns
+        townList = Utils.getTownList(true);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, townList);
+        spTown.setAdapter(adapter);
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // just reset the list on any change
+            fillTownList();
+            cl.resetList();
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+        cl.resetList();
+    }
+
+    // based on which town selected, display what cars are in that town
     private void fillCarList(String sx) {
         cl = new CarList(lv, getBaseContext(), Utils.getCarsInTown(sx));
         cl.resetList();
@@ -77,8 +118,9 @@ public class YardListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SET_CAR_INFO && resultCode == RESULT_OK) {
             CarData cd = (CarData) data.getSerializableExtra(MainActivity.CAR_DATA);
-            cdSelected.copyLocation(cd);
-            DBUtils.saveCarData();
+
+            MainActivity.carAddEditDelete(cd, false);
+
             cl.resetList();
         }
     }

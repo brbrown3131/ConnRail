@@ -1,10 +1,15 @@
 package com.connriver.connrail;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+
 /**
  * Created by user on 1/25/2018.
  */
 
-public class ConsistData {
+public class ConsistData implements Serializable {
     private int id;
     private String sName;
     private String sDescription;
@@ -12,18 +17,38 @@ public class ConsistData {
     public ConsistData() {
         this.id = getNewId();
     }
+
     public ConsistData(String name, String desc) {
         this.id = getNewId();
         this.sName = name;
         this.sDescription = desc;
     }
 
+    public ConsistData(JSONObject jsonData) {
+        try {
+            id = jsonData.getInt("id");
+            sName = jsonData.getString("na");
+            sDescription = jsonData.getString("de");
+        } catch (JSONException e) {
+        }
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonData = new JSONObject();
+        try {
+            jsonData.put("id", id);
+            jsonData.put("na", sName);
+            jsonData.put("de", sDescription);
+            return jsonData;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
     // loop though all consists looking for a unique id
     private int getNewId() {
         int id = 1;
-        ConsistData cd;
-        for (int ix = 0; ix < MainActivity.gConsistData.size(); ix++) {
-            cd = MainActivity.gConsistData.get(ix);
+        for (ConsistData cd : MainActivity.getConsistList()) {
             if (cd.id >= id) {
                 id = cd.id + 1;
             }

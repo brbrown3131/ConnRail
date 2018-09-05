@@ -2,8 +2,13 @@ package com.connriver.connrail;
 
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +20,8 @@ import android.widget.Spinner;
 
 import java.util.ArrayList;
 
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -23,6 +30,8 @@ public class TownFragment extends Fragment {
     private SpotList sl;
     private String sCurrentTown = null;
     private Listener mCallback;
+    private Spinner spTown;
+    private ArrayList<String> townList;
 
     public interface Listener {
         void onSpotSelected(int id, String sTown);
@@ -51,20 +60,9 @@ public class TownFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_town, container, false);
 
-        Spinner spTown = (Spinner) view.findViewById(R.id.spTown);
+        spTown = (Spinner) view.findViewById(R.id.spTown);
 
-        //fill the spinner list of towns
-        final ArrayList<String> townList = Utils.getTownList(true);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
-        spTown.setAdapter(adapter);
-        if (sCurrentTown != null) {
-            for (int ix = 1; ix < townList.size(); ix++) {
-                if (townList.get(ix).equals(sCurrentTown)) {
-                    spTown.setSelection(ix);
-                    break;
-                }
-            }
-        }
+        fillTownList();
 
         spTown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -94,8 +92,42 @@ public class TownFragment extends Fragment {
 
         });
 
-
         return view;
+    }
+
+    private void fillTownList() {
+        //fill the spinner list of towns
+        townList = Utils.getTownList(true);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
+        spTown.setAdapter(adapter);
+        if (sCurrentTown != null) {
+            for (int ix = 1; ix < townList.size(); ix++) {
+                if (townList.get(ix).equals(sCurrentTown)) {
+                    spTown.setSelection(ix);
+                    break;
+                }
+            }
+        }
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            fillTownList();
+            updateView();
+        }
+    };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
     }
 
     private void updateView() {

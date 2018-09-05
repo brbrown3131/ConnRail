@@ -4,15 +4,30 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_CAR_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
+import static com.connriver.connrail.MainActivity.TAG;
 
 /**
  * Created by bbrown on 3/16/2018.
@@ -61,6 +76,17 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
             return;
         }
 
+        showInfo();
+
+        Button btnSetout = (Button) findViewById(R.id.btnSetout);
+        btnSetout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                setout();
+            }
+        });
+    }
+
+    private void showInfo() {
         setTitle(cd.getInfo());
 
         showCurrent();
@@ -81,11 +107,16 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
             TextView tvIndustryDest = (TextView) findViewById(R.id.dest_industry);
             TextView tvTrackDest = (TextView) findViewById(R.id.dest_track);
             Button btnDeliver = (Button) findViewById(R.id.btnDeliver);
+
+            LinearLayout llLading = (LinearLayout) findViewById(R.id.llDestLading);
+            LinearLayout llInst = (LinearLayout) findViewById(R.id.llDestInstructions);
+            llLading.setVisibility(View.GONE);
+            llInst.setVisibility(View.GONE);
+
             CarSpotData csd = cd.getNextSpot();
             if (csd != null) {
                 final SpotData dest_sd = Utils.getSpotFromID(csd.getID());
                 if (dest_sd != null) {
-
                     tvTownDest.setText(dest_sd.getTown());
                     tvIndustryDest.setText(dest_sd.getIndustry());
                     tvTrackDest.setText(dest_sd.getTrack());
@@ -99,27 +130,55 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
                 }
                 String sx = csd.getLading();
                 if (sx != null && !sx.isEmpty()) {
-                    LinearLayout llLading = (LinearLayout) findViewById(R.id.llDestLading);
-                    TextView tvLadingDest = (TextView) findViewById(R.id.tvDestLading);
                     llLading.setVisibility(View.VISIBLE);
+                    TextView tvLadingDest = (TextView) findViewById(R.id.tvDestLading);
                     tvLadingDest.setText(sx);
                 }
                 sx = csd.getInstructions();
                 if (sx != null && !sx.isEmpty()) {
-                    LinearLayout llInst = (LinearLayout) findViewById(R.id.llDestInstructions);
-                    TextView tvInstructDest = (TextView) findViewById(R.id.tvDestInstructions);
                     llInst.setVisibility(View.VISIBLE);
+                    TextView tvInstructDest = (TextView) findViewById(R.id.tvDestInstructions);
                     tvInstructDest.setText(sx);
                 }
             }
         }
+    }
 
-        Button btnSetout = (Button) findViewById(R.id.btnSetout);
-        btnSetout.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                setout();
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);
+            if (msgType == MSG_DELETE_CAR_DATA || msgType == MSG_UPDATE_CAR_DATA) {
+                String sMsgData = intent.getStringExtra(MSG_DATA_TAG);
+                try {
+                    CarData cdTemp =  new CarData(new JSONObject(sMsgData));
+                    if (cdTemp.getID() == cd.getID()) {
+                        if (msgType == MSG_DELETE_CAR_DATA) {
+                            finish();
+                        } else {
+                            cd = cdTemp;
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSON Exception");
+                }
             }
-        });
+
+            showInfo();
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
     }
 
     private void showCurrent() {
@@ -155,6 +214,28 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
         tvTownCurr.setText(cur_sd.getTown());
         tvIndustryCurr.setText(cur_sd.getIndustry());
         tvTrackCurr.setText(cur_sd.getTrack());
+
+        LinearLayout llLading = (LinearLayout) findViewById(R.id.llCurrLading);
+        LinearLayout llInst = (LinearLayout) findViewById(R.id.llCurrInstructions);
+        llLading.setVisibility(View.GONE);
+        llInst.setVisibility(View.GONE);
+
+        CarSpotData csd = cd.getCurrentSpot();
+        if (csd != null) {
+            String sx = csd.getLading();
+            if (sx != null && !sx.isEmpty()) {
+                llLading.setVisibility(View.VISIBLE);
+                TextView tvLading = (TextView) findViewById(R.id.tvCurrLading);
+                tvLading.setText(sx);
+            }
+            sx = csd.getInstructions();
+            if (sx != null && !sx.isEmpty()) {
+                llInst.setVisibility(View.VISIBLE);
+                TextView tvInstruct = (TextView) findViewById(R.id.tvCurrInstructions);
+                tvInstruct.setText(sx);
+            }
+        }
+
     }
 
     private void setout() {

@@ -1,9 +1,14 @@
 package com.connriver.connrail;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,12 +18,15 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
 
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_CAR_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
 import static com.connriver.connrail.MainActivity.NONE;
 
 public class ConsistActivity extends AppCompatActivity {
@@ -27,9 +35,9 @@ public class ConsistActivity extends AppCompatActivity {
     private ArrayList<CarData> availableList = new ArrayList<>();
     private CarList carsInConsist;
     private ConsistData consistData;
-    int idConsist;
     private AlertDialog adAddCar = null;
     String sCurrentTown = null;
+    private int idConsist;
     private CarData cdSelected = null;
 
     static final int SET_CAR_INFO = 1;
@@ -42,11 +50,11 @@ public class ConsistActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.consistView);
 
         //get the consist ID and name
-        idConsist = getIntent().getIntExtra(MainActivity.CONSIST_ID, NONE);
-        consistData = Utils.getConsistFromID(idConsist);
+        consistData = (ConsistData) getIntent().getSerializableExtra(MainActivity.CONSIST_DATA);
         if (consistData == null) {
             return;
         }
+        idConsist = consistData.getID();
 
         Spinner spTown = (Spinner) findViewById(R.id.spTown);
         //fill the spinner list of towns
@@ -87,6 +95,26 @@ public class ConsistActivity extends AppCompatActivity {
 
         updateView();
     }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateView();
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -135,8 +163,8 @@ public class ConsistActivity extends AppCompatActivity {
         builder.setView(dialogView);
         builder.setTitle(R.string.edit_consist);
 
-        final EditText etName = (EditText) dialogView.findViewById(R.id.etConsistName);
-        final EditText etDesc = (EditText) dialogView.findViewById(R.id.etConsistDesc);
+        final TextInputEditText etName = (TextInputEditText) dialogView.findViewById(R.id.etConsistName);
+        final TextInputEditText etDesc = (TextInputEditText) dialogView.findViewById(R.id.etConsistDesc);
         etName.setText(consistData.getName());
         etDesc.setText(consistData.getDescription());
 
@@ -161,6 +189,7 @@ public class ConsistActivity extends AppCompatActivity {
                 }
                 consistData.setName(sName);
                 consistData.setDescription(Utils.trim(etDesc));
+                MainActivity.consistAddEditDelete(consistData, false);
                 updateView();
                 ad.dismiss();
             }
@@ -169,9 +198,7 @@ public class ConsistActivity extends AppCompatActivity {
 
     private boolean dupFound(String sName) {
         // check for duplicate and message if found
-        ConsistData cd;
-        for (int ix = 0; ix < MainActivity.gConsistData.size(); ix++) {
-            cd = MainActivity.gConsistData.get(ix);
+        for (ConsistData cd :  MainActivity.getConsistList()) {
             if (cd.getID() != consistData.getID() && sName.equals(cd.getName())) {
                 Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_consist), this) ;
                 return true;
@@ -193,14 +220,8 @@ public class ConsistActivity extends AppCompatActivity {
         if (Utils.getConsistSize(idConsist) != 0) {
             return;
         }
-        MainActivity.gConsistData.remove(consistData);
+        MainActivity.consistAddEditDelete(consistData, true);
         finish();
-    }
-
-    private void updateConsistList() {
-        carsInConsist.resetList();
-        DBUtils.saveConsistData();
-        DBUtils.saveCarData();
     }
 
     private void addToConsist() {
@@ -240,8 +261,11 @@ public class ConsistActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CarData cd = clAvail.getCarData(position);
+
                 cd.setConsist(idConsist);
-                updateConsistList();
+
+                MainActivity.carAddEditDelete(cd, false);
+
                 updateView();
                 if (adAddCar != null) {
                     adAddCar.dismiss();
@@ -294,8 +318,9 @@ public class ConsistActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SET_CAR_INFO && resultCode == RESULT_OK) {
             CarData cd = (CarData) data.getSerializableExtra(MainActivity.CAR_DATA);
-            cdSelected.copyLocation(cd);
-            updateConsistList();
+
+            MainActivity.carAddEditDelete(cd, false);
+
             updateView();
         }
     }

@@ -1,5 +1,9 @@
 package com.connriver.connrail;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -10,31 +14,89 @@ import static com.connriver.connrail.MainActivity.NONE;
  * Created by user on 1/19/2018.
  */
 
-public class CarData implements Serializable{
-    private String sInitials;
-    private String sNumber;
-    private String sType;
-    private String sNotes;
+public class CarData implements Serializable {
+    private int id;
+    private String sInitials = "";
+    private String sNumber = "";
+    private String sType = "";
+    private String sNotes = "";
     private ArrayList<CarSpotData> listSpots = new ArrayList<>(); // list of delivery spots
     private int ixSpot; // index of target/current spot.
     private int ixHoldUntilDay; // day/session when the car is free to be moved.
     private int idConsist; // which train/consist this car is part of, -1 if none
     private int idCurrentLoc; // current location of car - spot or hold/yard (interim location)
-    private boolean bIsInStorage; // true if car is in storage
+    private boolean bIsInStorage = false; // true if car is in storage
 
     public CarData() {
+        id = getNewId();
         ixSpot = NONE; // no spot by default
         idConsist = NONE; // not in a consist by default
         idCurrentLoc = NONE;
         ixHoldUntilDay = NONE;
     }
 
-    public void copyLocation(CarData source) {
-        ixSpot = source.ixSpot;
-        ixHoldUntilDay = source.ixHoldUntilDay;
-        idConsist = source.idConsist;
-        idCurrentLoc = source.idCurrentLoc;
-        bIsInStorage = source.bIsInStorage;
+    public CarData(JSONObject jsonData) {
+        try {
+            id = jsonData.getInt("id");
+            sInitials = jsonData.getString("in");
+            sNumber = jsonData.getString("nu");
+            sType = jsonData.getString("ty");
+            sNotes = jsonData.getString("no");
+
+            JSONArray jsonList = (JSONArray) jsonData.get("ls");
+            for (int ix = 0; ix < jsonList.length(); ix++) {
+                listSpots.add(new CarSpotData(jsonList.getJSONObject(ix)));
+            }
+
+            ixSpot = jsonData.getInt("sp");
+            ixHoldUntilDay = jsonData.getInt("ho");
+            idConsist = jsonData.getInt("co");
+            idCurrentLoc = jsonData.getInt("cl");
+            bIsInStorage = jsonData.getBoolean("is");
+        } catch (JSONException e) {
+        }
+    }
+
+    public JSONObject toJSON() {
+        JSONObject jsonData = new JSONObject();
+        try {
+            jsonData.put("id", id);
+            jsonData.put("in", sInitials);
+            jsonData.put("nu", sNumber);
+            jsonData.put("ty", sType);
+            jsonData.put("no", sNotes);
+
+            JSONArray jsArray = new JSONArray();
+            for (CarSpotData csd : listSpots) {
+                jsArray.put(csd.toJSON());
+            }
+            jsonData.put("ls", jsArray);
+
+            jsonData.put("sp", ixSpot);
+            jsonData.put("ho", ixHoldUntilDay);
+            jsonData.put("co", idConsist);
+            jsonData.put("cl", idCurrentLoc);
+            jsonData.put("is", bIsInStorage);
+
+            return jsonData;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
+    // loop though all cars looking for a unique id
+    private int getNewId() {
+        int id = 1;
+        for (CarData cd : MainActivity.getCarList()) {
+            if (cd.id >= id) {
+                id = cd.id + 1;
+            }
+        }
+        return id;
+    }
+
+    public int getID() {
+        return this.id;
     }
 
     // car is moved to storage - clear any existing consists or current locations
@@ -178,6 +240,27 @@ public class CarData implements Serializable{
         }
 
         return listSpots.get(ixSpot);
+    }
+
+    public CarSpotData getCurrentSpot() {
+        if (listSpots.isEmpty()) {
+            return null;
+        }
+        if (ixSpot == NONE) {
+            return null;
+        }
+        CarSpotData csd;
+        if (ixSpot == 0) {
+            csd = listSpots.get(listSpots.size() - 1);
+        } else {
+            csd = listSpots.get(ixSpot - 1);
+        }
+
+        if (csd.getID() == idCurrentLoc) {
+            return csd;
+        } else {
+            return null;
+        }
     }
 
     // remove any deleted spots from the car's spotlist

@@ -32,7 +32,8 @@
     <string name="text_days">days</string>
     <!-- } Generic text { -->
 
-    <string name="action_network_settings">Data Settings</string>
+    <string name="action_import_export">Import/Export DB</string>
+    <string name="action_user_type">User Type</string>
     <string name="action_end">End</string>
 
     <!-- App Menus { -->
@@ -50,6 +51,8 @@
     <string name="menu_info">Info</string>
     <string name="menu_about">About</string>
     <string name="menu_help">Help</string>
+
+
     <!-- } App Menus -->
 
     <string name="about_text">This is the about text</string>
@@ -148,10 +151,24 @@
 
     <string name="all">[All]</string>
 
+    <string name="msg_overwrite_sure">Import will overwrite all changes made since selected file export. Are you sure you want to import?</string>
     <string name="import_db">Import Database File</string>
     <string name="export_db">Export Database File</string>
     <string name="export_done">Export complete</string>
     <string name="import_done">Import complete</string>
     <string name="import_empty">Import file is empty</string>
     <string name="title_activity_splash_screen">SplashScreen</string>
+
+    <!-- User Type -->
+    <string name="user_single">Single User</string>
+    <string name="user_single_desc">(Default) Only one user for the system. Private database resides on this user\'s device.</string>
+    <string name="user_owner">Owner</string>
+    <string name="user_ip">IP =</string>
+    <string name="remote_connected">Connected</string>
+    <string name="remote_disconnected">Disconnected</string>
+    <string name="remote_count">Remote Users Connected:</string>
+    <string name="user_owner_desc">Multiple users for the system. Public database resides on this user\'s device. Remote users can access data over the network.</string>
+    <string name="user_remote">Remote User</string>
+    <string name="user_remote_desc">Multiple users for the system. Public database resides on another user\'s device (the Owner). This user can access data over the network.</string>
+
 </resources>

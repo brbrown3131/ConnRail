@@ -4,6 +4,10 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -27,7 +31,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".About"
+            android:name=".AboutActivity"
             android:label="@string/menu_about"
             android:parentActivityName=".MainActivity" />
         <activity
@@ -35,8 +39,8 @@
             android:label="@string/menu_help"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".NetworkSettings"
-            android:label="@string/action_network_settings"
+            android:name=".ImportExportActivity"
+            android:label="@string/action_import_export"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ConsistListActivity"
@@ -69,13 +73,17 @@
             android:label="@string/menu_spot_list"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".CarAddEdit"
+            android:name=".CarAddEditActivity"
             android:label="@string/title_car_add_edit"
             android:parentActivityName=".CarListActivity" />
         <activity
-            android:name=".SpotAddEdit"
+            android:name=".SpotAddEditActivity"
             android:label="@string/title_spot_add_edit"
             android:parentActivityName=".SpotListActivity" />
+        <activity
+            android:name=".UserTypeActivity"
+            android:label="@string/action_user_type"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

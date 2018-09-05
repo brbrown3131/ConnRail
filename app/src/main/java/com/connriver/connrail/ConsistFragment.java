@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 
 /**
@@ -25,7 +25,7 @@ public class ConsistFragment extends Fragment {
     Listener mCallback;
 
     public interface Listener {
-        public void onConsistSelected(int id);
+        void onConsistSelected(int id);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ConsistFragment extends Fragment {
 
         lv = (ListView) view.findViewById(R.id.lvMain);
 
-        cl = new ConsistList(lv, getContext());
+        cl = new ConsistList(lv, getContext(), MainActivity.getConsistList());
 
         cl.resetList();
 
@@ -80,9 +80,7 @@ public class ConsistFragment extends Fragment {
 
     private boolean dupFound(String sName) {
         // check for duplicate and message if found
-        ConsistData cd;
-        for (int ix = 0; ix < MainActivity.gConsistData.size(); ix++) {
-            cd = MainActivity.gConsistData.get(ix);
+        for (ConsistData cd : MainActivity.getConsistList()) {
             if (sName.equals(cd.getName())) {
                 Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_consist), getActivity()) ;
                 return true;
@@ -106,8 +104,8 @@ public class ConsistFragment extends Fragment {
         builder.setView(dialogView);
         builder.setTitle(R.string.new_consist);
 
-        final EditText etName = (EditText) dialogView.findViewById(R.id.etConsistName);
-        final EditText etDesc = (EditText) dialogView.findViewById(R.id.etConsistDesc);
+        final TextInputEditText etName = (TextInputEditText) dialogView.findViewById(R.id.etConsistName);
+        final TextInputEditText etDesc = (TextInputEditText) dialogView.findViewById(R.id.etConsistDesc);
         builder.setPositiveButton(R.string.button_ok, null);
 
         builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
@@ -129,20 +127,16 @@ public class ConsistFragment extends Fragment {
                     return;
                 }
                 ConsistData cd = new ConsistData(sName, Utils.trim(etDesc));
-                MainActivity.gConsistData.add(cd);
+                MainActivity.consistAddEditDelete(cd, false);
                 ad.dismiss();
-                update();
+                cl.resetList();
             }
         });
     }
 
-    private void update() {
-        cl.resetList();
-        DBUtils.saveConsistData();
-    }
 
     private void setTrain(int pos) {
-        ConsistData cd = MainActivity.gConsistData.get(pos);
+        ConsistData cd = cl.getConsistData(pos);
         mCallback.onConsistSelected(cd.getID());
     }
 

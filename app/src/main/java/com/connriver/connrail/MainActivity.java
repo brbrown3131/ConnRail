@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +22,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Owner.OnDataUpdate, Remote.OnDataUpdate {
 
     // global defines ===============================================================
     public static final int CARDATA_SPOT_MAX = 4;
@@ -29,30 +31,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // global defines ===============================================================
 
     // global data
-    public static ArrayList<CarData> gCarData = null; // global car data
-    public static ArrayList<SpotData> gSpotData = null; // global spot data
-    public static ArrayList<ConsistData> gConsistData = null; // global spot data
+    private static ArrayList<CarData> gCarDataList =  new ArrayList<>(); // global car data
+    private static ArrayList<SpotData> gSpotDataList =  new ArrayList<>(); // global spot data
+    private static ArrayList<ConsistData> gConsistDataList =  new ArrayList<>(); // global spot data
     private static int iSessionNumber = 0;
     public static boolean bShowInStorage = true;
 
     public static final int ALERT_LOCATION = 1;
     public static final int ALERT_SPOTS = 2;
 
+    public static final int SOCKET_PORT = 8099;
+    public static final int MSG_PING = 1;
+    public static final int MSG_NO_PING = 2;
+    public static final int MSG_UPDATE = 3;
+    public static final int MSG_REQUEST_FULL_DATA = 4;
+    public static final int MSG_REQUEST_SESSION_DATA = 6;
+    public static final int MSG_SESSION_DATA = 7;
+    public static final int MSG_FULL_CAR_DATA = 8;
+    public static final int MSG_FULL_SPOT_DATA = 9;
+    public static final int MSG_FULL_CONSIST_DATA = 10;
+
+    public static final int MSG_DELETE_CAR_DATA = 11;
+    public static final int MSG_DELETE_SPOT_DATA = 12;
+    public static final int MSG_DELETE_CONSIST_DATA = 13;
+
+    public static final int MSG_UPDATE_CAR_DATA = 14;
+    public static final int MSG_UPDATE_SPOT_DATA = 15;
+    public static final int MSG_UPDATE_CONSIST_DATA = 16;
+
+    public static final String MSG_TYPE_TAG = "msg_type";
+    public static final String MSG_DATA_TAG = "msg_data";
+
+    public static final String INTENT_UPDATE_DATA = "intent_update_data";
+
     // intent data labels
-    public static final String CAR_DATA_INDEX = "CarDataIndex";
-    public static final String SPOT_DATA_INDEX = "SpotDataIndex";
-    public static final String CONSIST_ID = "ConsistId";
+    //public static final String CAR_DATA_INDEX = "CarDataIndex";
+    public static final String SPOT_DATA = "SpotData";
+    public static final String CONSIST_DATA = "ConsistData";
     public static final String CAR_DATA = "CarData";
     public static final String TOWN_NAME = "TownName";
     public static final String CAR_INFO_PARENT = "Parent";
     public static final String PARENT_YARD = "YardMaster";
     public static final String PARENT_TRAIN = "TrainMaster";
     public static final String PREFS_NAME = "ConnRailPrefs";
-    public static final String SESSION_NUMBER = "SessionNumber";
+    public static final String PREFS_SESSION_NUMBER = "SessionNumber";
+    public static final String PREFS_USER_TYPE = "UserType";
+    public static final String PREFS_OWNER_IP = "OwnerIP";
     public static final String CURRENT_TAB = "CurrentTab";
+
+    // user type and data
+    public static final int USER_TYPE_SINGLE = 1;
+    public static final int USER_TYPE_OWNER = 2;
+    public static final int USER_TYPE_REMOTE = 3;
+    private static int iUserType = -1;
+    private static final int GET_USER_TYPE = 1;
+    public static final String USER_TYPE = "user_type";
+    public static final String OWNER_IP = "owner_ip";
+    private static String sOwnerIP = null;
 
     private ListView lvAlerts;
     private static ArrayList<AlertData> alerts = new ArrayList<>();
+
+    private static TextView tvUserType;
+    private static TextView tvUserStatus;
+    private static TextView tvSession;
+    private static Button btnSession;
+
+    private static Owner mOwner = null;
+    private static Remote mRemote = null;
 
     public static int getSessionNumber() {
         return iSessionNumber;
@@ -61,8 +107,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void incrSessionNumber() {
         iSessionNumber++;
         SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
-        editor.putInt(SESSION_NUMBER, iSessionNumber);
+        editor.putInt(PREFS_SESSION_NUMBER, iSessionNumber);
         editor.apply();
+
+        // if an owner, send the new day/session number to all remotes
+        if (iUserType == USER_TYPE_OWNER && mOwner != null) {
+            mOwner.sendAll(MSG_SESSION_DATA, Integer.toString(iSessionNumber));
+        }
     }
 
     @Override
@@ -73,18 +124,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // set the context for utils
         Utils.init(this);
 
-        // get the session number
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        iSessionNumber = prefs.getInt(SESSION_NUMBER, 0);
+        // find all the ui elements
+        tvUserType = (TextView) findViewById(R.id.tvUserType);
+        tvUserStatus = (TextView) findViewById(R.id.tvUserStatus);
+        tvSession = (TextView) findViewById(R.id.tvSessionNumber);
 
-        final TextView tvSession = (TextView) findViewById(R.id.tvSessionNumber);
-        tvSession.setText(Integer.toString(getSessionNumber()));
-
-        Button btnSession = (Button)findViewById(R.id.btnSessionNumber);
+        btnSession = (Button)findViewById(R.id.btnSessionNumber);
         btnSession.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 incrSessionNumber();
-                tvSession.setText(Integer.toString(getSessionNumber()));
+                showSessionNumber();
             }
         });
 
@@ -100,22 +149,181 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        updateData(this);
+        // load the saved user type and owner ip
+        loadUserType();
+
+        // show the current user type
+        displayUserType();
     }
 
-    public static void updateData(Context ctx) {
-        DBUtils.init(ctx, DBUtils.MODE_SINGLE_USER);
+    public static ArrayList<CarData> getCarList() {
+        return gCarDataList;
+    }
+
+    public static ArrayList<SpotData> getSpotList() {
+        return gSpotDataList;
+    }
+
+    public static ArrayList<ConsistData> getConsistList() {
+        return gConsistDataList;
+    }
+
+    public static void updateSpot(SpotData sdAddEditDel, boolean bDelete) {
+        // remove the one with the same ID (if there)
+        int id = sdAddEditDel.getID();
+        for (SpotData sd : gSpotDataList) {
+            if (sd.getID() == id) {
+                gSpotDataList.remove(sd);
+                break;
+            }
+        }
+        if (!bDelete) { // only add on add or update
+            gSpotDataList.add(sdAddEditDel); // add to the spot list
+        }
+    }
+
+    public static void spotAddEditDelete(SpotData sdAddEdit, boolean bDelete) {
+        int msgType = bDelete ? MSG_DELETE_SPOT_DATA : MSG_UPDATE_SPOT_DATA;
+
+        if (iUserType != USER_TYPE_REMOTE) {
+            updateSpot(sdAddEdit, bDelete); // update/add/delete list item directly
+            DBUtils.saveSpotData(); //save to the DB
+
+            // if an owner, send the spot change to all remotes
+            if (iUserType == USER_TYPE_OWNER && mOwner != null) {
+                mOwner.sendAll(msgType, sdAddEdit.toJSON().toString());
+            }
+        } else {
+            // if remote, send the spot change to owner
+            if (mRemote != null) {
+                mRemote.send(msgType, sdAddEdit.toJSON().toString());
+            }
+        }
+    }
+
+    public static void updateCar(CarData cdAddEditDel, boolean bDelete) {
+
+        // remove the one with the same ID (if there)
+        int id = cdAddEditDel.getID();
+        for (CarData cd : gCarDataList) {
+            if (cd.getID() == id) {
+                gCarDataList.remove(cd);
+                break;
+            }
+        }
+        if (!bDelete) { // only add on add or update
+            gCarDataList.add(cdAddEditDel); // add to the car list
+        }
+    }
+
+    public static void carAddEditDelete(CarData cdAddEdit, boolean bDelete) {
+        int msgType = bDelete ? MSG_DELETE_CAR_DATA : MSG_UPDATE_CAR_DATA;
+
+        if (iUserType != USER_TYPE_REMOTE) {
+            updateCar(cdAddEdit, bDelete); // update/add/delete list item
+            DBUtils.saveCarData(); //save to the DB
+
+            // if an owner, send the car change to all remotes
+            if (iUserType == USER_TYPE_OWNER && mOwner != null) {
+                mOwner.sendAll(msgType, cdAddEdit.toJSON().toString());
+            }
+        } else {
+            // if remote, send the car change to owner
+            if (mRemote != null) {
+                mRemote.send(msgType, cdAddEdit.toJSON().toString());
+            }
+        }
+    }
+
+    public static void updateConsist(ConsistData cdAddEditDel, boolean bDelete) {
+        // remove the one with the same ID (if there)
+        int id = cdAddEditDel.getID();
+
+        for (ConsistData cd : gConsistDataList) {
+            if (cd.getID() == id) {
+                gConsistDataList.remove(cd);
+                break;
+            }
+        }
+        if (!bDelete) { // only add on add or update
+            gConsistDataList.add(cdAddEditDel); // add to the consist list
+        }
+    }
+
+    public static void consistAddEditDelete(ConsistData cdAddEdit, boolean bDelete) {
+        int msgType = bDelete ? MSG_DELETE_CONSIST_DATA : MSG_UPDATE_CONSIST_DATA;
+
+        if (iUserType != USER_TYPE_REMOTE) {
+            updateConsist(cdAddEdit, bDelete); // update/add/delete list item
+            DBUtils.saveConsistData(); //save to the DB
+
+            // if an owner, send the consist change to all remotes
+            if (iUserType == USER_TYPE_OWNER && mOwner != null) {
+                mOwner.sendAll(msgType, cdAddEdit.toJSON().toString());
+            }
+        } else {
+            // if remote, send the consist change to owner
+            if (mRemote != null) {
+                mRemote.send(msgType, cdAddEdit.toJSON().toString());
+            }
+        }
+    }
+
+    private void loadUserType() {
+        // get the session number locally
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        int ix = prefs.getInt(PREFS_USER_TYPE, USER_TYPE_SINGLE);
+        String sx = "";
+        if (ix == USER_TYPE_REMOTE) {
+            sx = prefs.getString(PREFS_OWNER_IP, "");
+        }
+        handleTypeChange(ix, sx);
+    }
+
+    private void saveUserType() {
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putInt(PREFS_USER_TYPE, iUserType);
+        if (iUserType == USER_TYPE_REMOTE) {
+            editor.putString(PREFS_OWNER_IP, sOwnerIP);
+        }
+        editor.apply();
+    }
+
+    private void requestAllData() {
+
+        // remote user will get data when they connect to owner
+        if (iUserType != USER_TYPE_REMOTE) {
+            loadAllData();
+        }
+    }
+
+    // locally load the day/session number and all DB tables (single/owner)
+    private void loadAllData() {
+        loadSessionNumber();
+        loadDBData(this);
+    }
+
+    private void loadSessionNumber() {
+        // get the session number locally
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        iSessionNumber = prefs.getInt(PREFS_SESSION_NUMBER, 1);
+        showSessionNumber();
+    }
+
+    private void showSessionNumber() {
+        tvSession.setText(Integer.toString(iSessionNumber));
+    }
+
+    public static void loadDBData(Context ctx) {
+        DBUtils.init(ctx);
 
         // load car information from the db
-        gCarData = new ArrayList<CarData>();
         DBUtils.loadCarData();
 
         // load spot information from the db
-        gSpotData = new ArrayList<>();
         DBUtils.loadSpotData();
 
         // load consist information from the db
-        gConsistData = new ArrayList<>();
         DBUtils.loadConsistData();
 
         // remove all dead spots
@@ -134,7 +342,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AlertData alertLocations() {
         int count = 0;
 
-        for (CarData cd : gCarData) {
+        for (CarData cd : gCarDataList) {
             if (cd.getCurrentLoc() == NONE && !cd.getInStorage() && cd.getConsist() == NONE) {
                 count++;
             }
@@ -152,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private AlertData alertSpots() {
         int count = 0;
 
-        for (CarData cd : gCarData) {
+        for (CarData cd : gCarDataList) {
             if (cd.invalidSpots()) {
                 count++;
             }
@@ -207,12 +415,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (ad.getID() == ALERT_SPOTS) {
                     startActivity(new Intent(getApplication(), CarListActivity.class));
                 }
-
             }
 
         });
-
-
     }
 
     @Override
@@ -240,14 +445,92 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_network_settings:
-                startActivity(new Intent(this, NetworkSettings.class));
+            case R.id.action_import_export:
+                startActivity(new Intent(this, ImportExportActivity.class));
                 break;
+            case R.id.action_user_type:
+                Intent intent = new Intent(this, UserTypeActivity.class);
+                intent.putExtra(USER_TYPE, iUserType);
+                intent.putExtra(OWNER_IP, sOwnerIP);
+                startActivityForResult(intent, GET_USER_TYPE);
+                break;
+
             case R.id.action_end:
                 finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == GET_USER_TYPE) {
+            if (resultCode == RESULT_OK) {
+                int iType = data.getIntExtra(USER_TYPE, USER_TYPE_SINGLE);
+                String sOwnIP = data.getStringExtra(OWNER_IP);
+
+                handleTypeChange(iType, sOwnIP);
+            }
+        }
+    }
+
+    private void handleTypeChange(int iType, String sOwnIP) {
+        // return if nothing has changed
+        if (iType == iUserType) {
+            if (iType != USER_TYPE_REMOTE || sOwnIP.equals(sOwnerIP)) {
+                return;
+            }
+        }
+
+        boolean bRequestData = true;
+
+        // don't reload the DB info if a change between single/owner
+        if ((iType == USER_TYPE_OWNER && iUserType == USER_TYPE_SINGLE) ||
+            (iType == USER_TYPE_SINGLE && iUserType == USER_TYPE_OWNER )) {
+            bRequestData = false;
+        }
+
+        iUserType = iType;
+        sOwnerIP = sOwnIP;
+
+        saveUserType();
+
+        // close/destroy any owner or remote
+        if (mOwner != null) {
+            mOwner.close();
+            mOwner = null;
+        }
+        if (mRemote != null) {
+            mRemote.close();
+            mRemote = null;
+        }
+
+        // if change to remote or owner - create new ones
+        if (iUserType == USER_TYPE_REMOTE) {
+            mRemote = new Remote(this, sOwnerIP);
+        } else if (iUserType == USER_TYPE_OWNER) {
+            mOwner = new Owner(getApplicationContext(), this);
+        }
+
+        if (bRequestData) {
+            requestAllData();
+        }
+    }
+
+    private void displayUserType() {
+        if (iUserType == USER_TYPE_REMOTE) {
+            tvUserType.setText(getResources().getString(R.string.user_remote) + " - " +
+                    getResources().getString(R.string.user_owner) + " " + getResources().getString(R.string.user_ip) + " " + sOwnerIP);
+            tvUserStatus.setText(getResources().getString(R.string.remote_disconnected));
+            btnSession.setEnabled(false); // remote can't increment the day/session
+        } else if (iUserType == USER_TYPE_OWNER) {
+            tvUserType.setText(getResources().getString(R.string.user_owner) +  " - " + getResources().getString(R.string.user_ip) + " " + mOwner.getIP());
+            btnSession.setEnabled(true);
+        } else {
+            tvUserType.setText(R.string.user_single);
+            tvUserStatus.setText("");
+            btnSession.setEnabled(true);
+        }
     }
 
     @Override
@@ -272,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(this, SpotListActivity.class));
                 break;
             case R.id.nav_about:
-                startActivity(new Intent(this, About.class));
+                startActivity(new Intent(this, AboutActivity.class));
                 break;
             case R.id.nav_help:
                 startActivity(new Intent(this, HelpActivity.class));
@@ -284,4 +567,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    // broadcast a potential UI change to any activities that are listening
+    private void updateUI(int iMsgType, String sMsgData) {
+        Intent intent = new Intent(INTENT_UPDATE_DATA);
+        intent.putExtra(MSG_TYPE_TAG, iMsgType);
+        intent.putExtra(MSG_DATA_TAG, sMsgData);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    @Override
+    public void onOwnerDataUpdate(final int msgType, final String sData) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (msgType) {
+                    case MSG_PING:
+                        tvUserStatus.setText(getResources().getString(R.string.remote_count) + " " + mOwner.getRemoteCount() );
+                        break;
+                }
+            }
+        });
+    }
+
+    private void remoteReconnect() {
+        if (mRemote != null) {
+            mRemote.close();
+            mRemote = null;
+        }
+
+        mRemote = new Remote(this, sOwnerIP);
+    }
+
+    @Override
+    public void onRemoteDataUpdate(final int iMsgType, final String sData) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (iMsgType) {
+                    case MSG_PING:
+                        tvUserStatus.setText(getResources().getString(R.string.remote_connected));
+                        break;
+                    case MSG_NO_PING:
+                        tvUserStatus.setText(getResources().getString(R.string.remote_disconnected));
+                        remoteReconnect();
+                        break;
+                    case MSG_SESSION_DATA:
+                        iSessionNumber = Integer.parseInt(sData);
+                        showSessionNumber();
+                        break;
+
+                    default:
+                        updateUI(iMsgType, sData);
+                }
+            }
+        });
+    }
 }

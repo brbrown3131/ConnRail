@@ -1,7 +1,9 @@
 package com.connriver.connrail;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -23,7 +25,7 @@ import java.io.OutputStream;
 
 import static com.connriver.connrail.MainActivity.TAG;
 
-public class NetworkSettings extends AppCompatActivity {
+public class ImportExportActivity extends AppCompatActivity {
 
     private static final int PATH_SELECT_EXPORT = 0;
     private static final int PATH_SELECT_IMPORT = 1;
@@ -31,7 +33,7 @@ public class NetworkSettings extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_network_settings);
+        setContentView(R.layout.activity_import_export);
 
         final Button btnImport = (Button) findViewById(R.id.btnImport);
         btnImport.setOnClickListener(new View.OnClickListener() {
@@ -48,13 +50,32 @@ public class NetworkSettings extends AppCompatActivity {
         });
     }
 
+    private void messageOverWrite() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setMessage(getResources().getString(R.string.msg_overwrite_sure));
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.button_ok),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showReadChooser();
+                    }
+                });
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getResources().getString(R.string.button_cancel),
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        alertDialog.show();
+    }
+
     private void importDB() {
 
         // if permission.READ_EXTERNAL_STORAGE not allowed - return
         if (!isReadAllowed()) {
             return;
         }
-        showReadChooser();
+        messageOverWrite();
     }
 
     private void showReadChooser() {
@@ -152,7 +173,7 @@ public class NetworkSettings extends AppCompatActivity {
         }
 
         // reinitialize with new data
-        MainActivity.updateData(getBaseContext());
+        MainActivity.loadDBData(getBaseContext());
 
         Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.import_done), this);
     }
@@ -161,15 +182,6 @@ public class NetworkSettings extends AppCompatActivity {
         Context ctx = getBaseContext();
         File fDB = ctx.getDatabasePath(DBUtils.getDbName());
         return fDB.getAbsolutePath();
-    }
-
-    private String getBackupPath() {
-        // get the external storage directory
-        File sd = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-
-        // path for the destination file
-        String sx = sd.getAbsolutePath() + "/" + DBUtils.getDbName() + ".db";
-        return sx;
     }
 
     private boolean isWriteAllowed() {

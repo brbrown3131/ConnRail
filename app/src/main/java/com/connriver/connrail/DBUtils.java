@@ -9,72 +9,47 @@ import android.content.Context;
 
 public class DBUtils {
     private static Context context;
-    private static int iMode;
     private static DBHandler dbh;
 
-    public static final int MODE_SINGLE_USER = 1;
-
-    public static void init(Context ctx, int mode) {
+    public static void init(Context ctx) {
         context = ctx;
-        iMode = mode;
-
-        if (iMode == MODE_SINGLE_USER) {
-            dbh = new DBHandler(context);
-        }
+        dbh = new DBHandler(context);
     }
 
     //====================================
 
     public static void setDbName(String sx) {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.setDbName(sx);
-        }
+        dbh.setDbName(sx);
     }
+
     public static String getDbName() {
-        if (iMode == MODE_SINGLE_USER) {
-            return dbh.getDbName();
-        }
-        return null;
+        return dbh.getDbName();
     }
 
     //====================================
     public static void loadCarData() {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.loadCarData();
-        }
+        dbh.loadCarData();
     }
 
     public static void saveCarData() {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.saveCarData();
-        }
+        dbh.saveCarData();
     }
 //====================================
     public static void loadSpotData() {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.loadSpotData();
-        }
+        dbh.loadSpotData();
     }
+
     public static void saveSpotData() {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.saveSpotData();
-        }
+        dbh.saveSpotData();
     }
 
 //====================================
     public static void loadConsistData() {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.loadConsistData();
-        }
+        dbh.loadConsistData();
     }
     public static void saveConsistData() {
-        if (iMode == MODE_SINGLE_USER) {
-            dbh.saveConsistData();
-        }
+        dbh.saveConsistData();
     }
 //====================================
-    public static void loadSystemInfo() {
-    }
-    public static void saveSystemInfo() {
-    }
+
 }

@@ -1,13 +1,19 @@
 package com.connriver.connrail;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
 
 /**
  * Created by bbrown on 3/16/2018.
@@ -19,7 +25,6 @@ public class CarLocationActivity extends AppCompatActivity
     private CarData cd;
     private String sCurrentTown = null;
     private ViewPager viewPager;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

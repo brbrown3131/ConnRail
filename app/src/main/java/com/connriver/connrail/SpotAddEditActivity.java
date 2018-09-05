@@ -1,29 +1,43 @@
 package com.connriver.connrail;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SpotAddEdit extends AppCompatActivity {
-    private int ixEdit = -1;
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_SPOT_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
+import static com.connriver.connrail.MainActivity.TAG;
+
+public class SpotAddEditActivity extends AppCompatActivity {
     private AutoCompleteTextView actvTown;
-    private EditText etIndustry;
-    private EditText etTrack;
+    private TextInputEditText etIndustry;
+    private TextInputEditText etTrack;
     private Button btnSave;
-    private Button btnDelete;
-    private SpotData sdEdit = null;
+    private SpotData sdEdit;
 
     private int len(CharSequence cs) {
         return cs.toString().trim().length();
@@ -40,8 +54,8 @@ public class SpotAddEdit extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, townList);
         actvTown.setAdapter(adapter);
 
-        etIndustry = (EditText) findViewById(R.id.etSpotIndustry);
-        etTrack = (EditText) findViewById(R.id.etSpotTrack);
+        etIndustry = (TextInputEditText) findViewById(R.id.etSpotIndustry);
+        etTrack = (TextInputEditText) findViewById(R.id.etSpotTrack);
 
         btnSave = (Button) findViewById(R.id.btnSpotSave);
         btnSave.setOnClickListener(new View.OnClickListener() {
@@ -50,20 +64,17 @@ public class SpotAddEdit extends AppCompatActivity {
             }
         });
 
-        btnDelete = (Button) findViewById(R.id.btnSpotDelete);
+        Button btnDelete = (Button) findViewById(R.id.btnSpotDelete);
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 messageDelete();
             }
         });
 
-        ixEdit = getIntent().getIntExtra(MainActivity.SPOT_DATA_INDEX, -1);
-        if (ixEdit != -1) {
+        sdEdit = (SpotData) getIntent().getSerializableExtra(MainActivity.SPOT_DATA);
+        if (sdEdit != null) {
             btnDelete.setEnabled(true);
-            sdEdit = MainActivity.gSpotData.get(ixEdit);
-            actvTown.setText(sdEdit.getTown());
-            etIndustry.setText(sdEdit.getIndustry());
-            etTrack.setText(sdEdit.getTrack());
+            showData();
         }
 
         // automatically show the keyboard on a new but not an edit
@@ -84,7 +95,7 @@ public class SpotAddEdit extends AppCompatActivity {
         actvTown.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnSave.setEnabled(len(s) > 0);
+                updateSaveButton();
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -97,7 +108,7 @@ public class SpotAddEdit extends AppCompatActivity {
         etIndustry.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnSave.setEnabled(Utils.len(actvTown) > 0);
+                updateSaveButton();
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -110,7 +121,7 @@ public class SpotAddEdit extends AppCompatActivity {
         etTrack.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                btnSave.setEnabled(Utils.len(actvTown) > 0);
+                updateSaveButton();
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -120,7 +131,60 @@ public class SpotAddEdit extends AppCompatActivity {
             }
         });
 
+    }
 
+    private void showData() {
+        actvTown.setText(sdEdit.getTown());
+        etIndustry.setText(sdEdit.getIndustry());
+        etTrack.setText(sdEdit.getTrack());
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (sdEdit == null) {
+                return;
+            }
+            int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);
+            if (msgType == MSG_DELETE_SPOT_DATA || msgType == MSG_UPDATE_SPOT_DATA) {
+                String sMsgData = intent.getStringExtra(MSG_DATA_TAG);
+                try {
+                    SpotData sd =  new SpotData(new JSONObject(sMsgData));
+                    if (sd.getID() == sdEdit.getID()) {
+                        //TODO - toast or msg about delete/update?
+                        if (msgType == MSG_DELETE_SPOT_DATA) {
+                            finish();
+                        } else {
+                            sdEdit = sd;
+                            showData();
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSON Exception");
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+    }
+
+    // enable the save button if all requirements met
+    private void updateSaveButton() {
+        String sTown = actvTown.getText().toString().trim();
+        String sIndustry = Utils.trim(etIndustry);
+        String sTrack = Utils.trim(etTrack);
+        btnSave.setEnabled(sTown.length() > 0 &&
+                (!sTown.equals(sdEdit.getTown()) || !sIndustry.equals(sdEdit.getIndustry()) || !sTrack.equals(sdEdit.getTrack())));
     }
 
     @Override
@@ -191,13 +255,11 @@ public class SpotAddEdit extends AppCompatActivity {
 
     private boolean dupFound() {
         // check for duplicate and message if found
-        SpotData sd;
-        String sTown = Utils.trim(actvTown);
+        String sTown = actvTown.getText().toString().trim();
         String sInd = Utils.trim(etIndustry);
         String sTrack = Utils.trim(etTrack);
-        for (int ix = 0; ix < MainActivity.gSpotData.size(); ix++) {
-            if (ix != ixEdit) { // ignore the currently edited
-                sd = MainActivity.gSpotData.get(ix);
+        for (SpotData sd : MainActivity.getSpotList()) {
+            if (sdEdit == null || sdEdit.getID() != sd.getID()) { // ignore the currently edited
                 if (sTown.equals(sd.getTown()) && sInd.equals(sd.getIndustry()) && sTrack.equals(sd.getTrack())) {
                     Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_spot), this);
                     return true;
@@ -213,24 +275,23 @@ public class SpotAddEdit extends AppCompatActivity {
             return false;
         }
 
-        if (sdEdit == null) { //new
-            sdEdit = new SpotData();
+        SpotData sd = new SpotData();
+        if (sdEdit != null) {
+            sd.setID(sdEdit.getID());
         }
 
-        sdEdit.setTown(Utils.trim(actvTown));
-        sdEdit.setIndustry(Utils.trim(etIndustry));
-        sdEdit.setTrack(Utils.trim(etTrack));
+        sd.setTown(actvTown.getText().toString().trim());
+        sd.setIndustry(Utils.trim(etIndustry));
+        sd.setTrack(Utils.trim(etTrack));
 
-        if (ixEdit == -1) { //new
-            MainActivity.gSpotData.add(sdEdit);
-        }
+        MainActivity.spotAddEditDelete(sd, false);
         return true;
     }
 
     // get how many cars are currently using this spot
     private int getUseCount(int idSpot) {
         int count = 0;
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             if (cd.usesSpotID(idSpot)) {
                 count++;
             }
@@ -267,10 +328,10 @@ public class SpotAddEdit extends AppCompatActivity {
     }
 
     private void deleteSpot() {
-        if (ixEdit != -1) {
-            MainActivity.gSpotData.remove(ixEdit);
+        if (sdEdit != null) {
+            MainActivity.spotAddEditDelete(sdEdit, true);
         }
-        Utils.removeAllDeadSpots();
+        Utils.removeAllDeadSpots(); //TODO - this is done on remote loop back
         finish();
     }
 

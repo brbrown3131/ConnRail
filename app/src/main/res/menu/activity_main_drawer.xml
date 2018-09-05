@@ -47,7 +47,6 @@
                     android:title="@string/menu_help" />
             </menu>
         </item>
-
     </group>
 
 </menu>

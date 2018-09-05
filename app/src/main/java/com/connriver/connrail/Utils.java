@@ -3,8 +3,8 @@ package com.connriver.connrail;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.design.widget.TextInputEditText;
 import android.util.Log;
-import android.widget.EditText;
 
 import java.util.ArrayList;
 
@@ -25,14 +25,14 @@ public class Utils {
 
     public static void dumpSpotData() {
         Log.d(TAG, "Dump Spot ------------------------------");
-        for (SpotData sd : MainActivity.gSpotData) {
+        for (SpotData sd : MainActivity.getSpotList()) {
             Log.d(TAG, sd.getID() + " " + sd.getTown() + " " + sd.getIndustry() + " " + sd.getTrack());
         }
     }
 
     public static void dumpCarData() {
         Log.d(TAG, "Dump Car------------------------------");
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             Log.d(TAG, cd.getInitials() + " " + cd.getNumber() + "=Loc:" + cd.getCurrentLoc() + " Consist:" + cd.getConsist() + (cd.getInStorage() ? " Stored" : ""));
         }
     }
@@ -42,7 +42,7 @@ public class Utils {
             return null;
         }
 
-        for (SpotData sd : MainActivity.gSpotData) {
+        for (SpotData sd : MainActivity.getSpotList()) {
             if (sd.getID() == id) {
                 return sd;
             }
@@ -55,7 +55,7 @@ public class Utils {
             return null;
         }
 
-        for (ConsistData cd : MainActivity.gConsistData) {
+        for (ConsistData cd : MainActivity.getConsistList()) {
             if (cd.getID() == id) {
                 return cd;
             }
@@ -71,7 +71,7 @@ public class Utils {
         }
         String sLast = "";
         String sTown;
-        for (SpotData sd : MainActivity.gSpotData) {
+        for (SpotData sd : MainActivity.getSpotList()) {
             sTown = sd.getTown();
             // the spots will be in alphabetical by town so only add on name change
             if (!sTown.equalsIgnoreCase(sLast)) {
@@ -86,7 +86,7 @@ public class Utils {
     public static ArrayList<CarData> getCarsInStorage() {
         ArrayList<CarData> carList = new ArrayList<>();
 
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             if (cd.getInStorage()) {
                 carList.add(cd);
             }
@@ -99,10 +99,10 @@ public class Utils {
         ArrayList<CarData> carList = new ArrayList<>();
 
         if (bInStorage) {
-            return MainActivity.gCarData;
+            return MainActivity.getCarList();
         }
 
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             if (!cd.getInStorage()) {
                 carList.add(cd);
             }
@@ -114,7 +114,7 @@ public class Utils {
     public static ArrayList<CarData> getCarsInTown(String sTown) {
         ArrayList<CarData> carList = new ArrayList<>();
 
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             if (cd.getInStorage() || cd.getConsist() != NONE) {
                 continue;
             }
@@ -138,7 +138,7 @@ public class Utils {
     public static int getConsistSize(int id) {
         int count = 0;
 
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             if (cd.getConsist() == id) {
                 count++;
             }
@@ -151,7 +151,7 @@ public class Utils {
     public static ArrayList<CarData> getCarsInConsist(int id, String sTown) {
         ArrayList<CarData> carList = new ArrayList<>();
 
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             if (cd.getConsist() == id) {
                 if (sTown == null) {
                     carList.add(cd);
@@ -175,10 +175,10 @@ public class Utils {
 
         // if town is null return the whole list
         if (sTown == null) {
-            return MainActivity.gSpotData;
+            return MainActivity.getSpotList();
         }
 
-        for (SpotData sd : MainActivity.gSpotData) {
+        for (SpotData sd : MainActivity.getSpotList()) {
             if (sTown.equalsIgnoreCase(sd.getTown())) {
                 spotList.add(sd);
             }
@@ -186,11 +186,11 @@ public class Utils {
         return spotList;
     }
 
-    public static int len(EditText et) {
+    public static int len(TextInputEditText et) {
         return trim(et).length();
     }
 
-    public static String trim(EditText et) {
+    public static String trim(TextInputEditText et) {
         return et.getText().toString().trim();
     }
 
@@ -209,7 +209,7 @@ public class Utils {
 
     // remove any deleted spots from the car's spotlist
     public static void removeAllDeadSpots() {
-        for (CarData cd : MainActivity.gCarData) {
+        for (CarData cd : MainActivity.getCarList()) {
             cd.removeDeadSpots();
         }
     }

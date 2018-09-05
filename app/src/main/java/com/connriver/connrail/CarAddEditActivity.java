@@ -1,45 +1,55 @@
 package com.connriver.connrail;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import static com.connriver.connrail.MainActivity.CARDATA_SPOT_MAX;
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_CAR_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
+import static com.connriver.connrail.MainActivity.TAG;
 
-public class CarAddEdit extends AppCompatActivity {
-    private int ixEdit = -1;
-    private EditText etInit;
-    private EditText etNum;
+public class CarAddEditActivity extends AppCompatActivity {
+    private TextInputEditText etInit;
+    private TextInputEditText etNum;
     private AutoCompleteTextView actvType;
-    private EditText etNotes;
+    private TextInputEditText etNotes;
     private Button btnAddSpot;
     private Button btnSave;
     private Button btnDelete;
     private CarData cdEdit = null;
-    private boolean bTypeFocusIn = false;
     private boolean bCarSpotDataChanged = false;
 
     private ListView lvCarSpots;
@@ -56,15 +66,15 @@ public class CarAddEdit extends AppCompatActivity {
 
         setContentView(R.layout.activity_car_add_edit);
 
-        etInit = (EditText) findViewById(R.id.etCarInitials);
-        etNum = (EditText) findViewById(R.id.etCarNumber);
+        etInit = (TextInputEditText) findViewById(R.id.etCarInitials);
+        etNum = (TextInputEditText) findViewById(R.id.etCarNumber);
         actvType = (AutoCompleteTextView) findViewById(R.id.actvCarType);
         actvType.setThreshold(1);
         String[] types = getResources().getStringArray(R.array.car_types);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, types);
         actvType.setAdapter(adapter);
 
-        etNotes = (EditText) findViewById(R.id.etCarNotes);
+        etNotes = (TextInputEditText) findViewById(R.id.etCarNotes);
         lvCarSpots = (ListView) findViewById(R.id.lvCarSpots);
 
         // automatically show the keyboard on a new but not an edit
@@ -111,12 +121,11 @@ public class CarAddEdit extends AppCompatActivity {
         actvType.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && actvType.getText().length() == 0) {
+                if (hasFocus && actvType.getText().toString().trim().length() == 0) {
                     actvType.showDropDown();
                 }
             }
         });
-
 
         etNotes.addTextChangedListener(new TextWatcher() {
             @Override
@@ -165,16 +174,12 @@ public class CarAddEdit extends AppCompatActivity {
             }
         });
 
-        ixEdit = getIntent().getIntExtra(MainActivity.CAR_DATA_INDEX, -1);
-        if (ixEdit == -1) {
+        cdEdit = (CarData) getIntent().getSerializableExtra(MainActivity.CAR_DATA);
+        if (cdEdit == null) {
             cdEdit = new CarData();
         } else {
             btnDelete.setEnabled(true);
-            cdEdit = MainActivity.gCarData.get(ixEdit);
-            etInit.setText(cdEdit.getInitials());
-            etNum.setText(cdEdit.getNumber());
-            actvType.setText(cdEdit.getType());
-            etNotes.setText(cdEdit.getNotes());
+            showData();
         }
 
         // if re-create after screen rotation, load the saved copy of car spot and boolean
@@ -198,7 +203,57 @@ public class CarAddEdit extends AppCompatActivity {
                 onSpotSelected(position);
             }
         });
+    }
 
+    private void showData() {
+        etInit.setText(cdEdit.getInitials());
+        etNum.setText(cdEdit.getNumber());
+        actvType.setText(cdEdit.getType());
+        etNotes.setText(cdEdit.getNotes());
+    }
+
+    private void updateSpotData() {
+        listCarSpotData = cdEdit.getCarSpotDataCopy();
+        updateSpotList();
+    }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (cdEdit == null) {
+                return;
+            }
+            int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);
+            if (msgType == MSG_DELETE_CAR_DATA || msgType == MSG_UPDATE_CAR_DATA) {
+                String sMsgData = intent.getStringExtra(MSG_DATA_TAG);
+                try {
+                    CarData cd =  new CarData(new JSONObject(sMsgData));
+                    if (cd.getID() == cdEdit.getID()) {
+                        if (msgType == MSG_DELETE_CAR_DATA) {
+                            finish();
+                        } else {
+                            cdEdit = cd;
+                            showData();
+                            updateSpotData();
+                        }
+                    }
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSON Exception");
+                }
+            }
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
     }
 
     // on screen rotate save the current spot list
@@ -235,11 +290,6 @@ public class CarAddEdit extends AppCompatActivity {
         ViewGroup.LayoutParams params = lvCarSpots.getLayoutParams();
         params.height = totalItemsHeight + totalDividersHeight;
         lvCarSpots.setLayoutParams(params);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     private void onSpotSelected(final int position) {
@@ -315,8 +365,8 @@ public class CarAddEdit extends AppCompatActivity {
         builder.setView(dialogView);
         builder.setTitle(R.string.lading_title);
 
-        final EditText etLading = (EditText) dialogView.findViewById(R.id.etLading);
-        final EditText etInstruct = (EditText) dialogView.findViewById(R.id.etInstruct);
+        final TextInputEditText etLading = (TextInputEditText) dialogView.findViewById(R.id.etLading);
+        final TextInputEditText etInstruct = (TextInputEditText) dialogView.findViewById(R.id.etInstruct);
         etLading.setText(tvLading.getText());
         etInstruct.setText(tvInstruct.getText());
 
@@ -342,7 +392,7 @@ public class CarAddEdit extends AppCompatActivity {
         String sInit = Utils.trim(etInit);
         String sNum = Utils.trim(etNum);
         String sNotes = Utils.trim(etNotes);
-        String sType = Utils.trim(actvType);
+        String sType = actvType.getText().toString().trim();
         btnSave.setEnabled(sInit.length() > 0 && sNum.length() > 0 &&
                 (!sInit.equals(cdEdit.getInitials()) ||
                 !sNum.equals(cdEdit.getNumber()) ||
@@ -410,14 +460,14 @@ public class CarAddEdit extends AppCompatActivity {
         dialogView.findViewById(R.id.spTown).setVisibility(View.GONE);
 
         ListView lv = (ListView) dialogView.findViewById(R.id.spotListView);
-        SpotList sl = new SpotList(lv, getBaseContext(), Utils.getSpotsInTown(null));
+        final SpotList sl = new SpotList(lv, getBaseContext(), Utils.getSpotsInTown(null));
         sl.resetList();
 
         // ListView Item Click Listener
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SpotData sd = MainActivity.gSpotData.get(position);
+                SpotData sd = sl.getSpotData(position);
                 CarSpotData csd = new CarSpotData(sd.getID(), 0); // 0 days by default
                 listCarSpotData.add(csd);
                 bCarSpotDataChanged = true;
@@ -440,12 +490,10 @@ public class CarAddEdit extends AppCompatActivity {
 
     private boolean dupFound() {
         // check for duplicate and message if found
-        CarData cd;
         String init = Utils.trim(etInit);
         String num = Utils.trim(etNum);
-        for (int ix = 0; ix < MainActivity.gCarData.size(); ix++) {
-            if (ix != ixEdit) { // ignore the currently edited
-                cd = MainActivity.gCarData.get(ix);
+        for (CarData cd : MainActivity.getCarList()) {
+            if (cd.getID() != cdEdit.getID()) { // ignore the currently edited
                 if (init.equals(cd.getInitials()) && num.equals(cd.getNumber())) {
                     Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.msg_duplicate_car), this);
                     return true;
@@ -497,15 +545,11 @@ public class CarAddEdit extends AppCompatActivity {
 
         cdEdit.setInitials(Utils.trim(etInit));
         cdEdit.setNumber(Utils.trim(etNum));
-        cdEdit.setType(Utils.trim(actvType));
+        cdEdit.setType(actvType.getText().toString().trim());
         cdEdit.setNotes(Utils.trim(etNotes));
         cdEdit.setCarSpotData(listCarSpotData);
 
-        if (ixEdit == -1) { // add new
-            MainActivity.gCarData.add(cdEdit);
-        }
-
-        DBUtils.saveCarData();
+        MainActivity.carAddEditDelete(cdEdit, false);
 
         return true; // save successful
     }
@@ -537,10 +581,7 @@ public class CarAddEdit extends AppCompatActivity {
     }
 
     private void deleteCar() {
-        if (ixEdit != -1) {
-            MainActivity.gCarData.remove(ixEdit);
-        }
-        DBUtils.saveCarData();
+        MainActivity.carAddEditDelete(cdEdit, true);
         finish();
     }
 
