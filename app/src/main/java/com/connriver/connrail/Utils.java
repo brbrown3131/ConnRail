@@ -4,38 +4,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.design.widget.TextInputEditText;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 import static com.connriver.connrail.MainActivity.NONE;
-import static com.connriver.connrail.MainActivity.TAG;
 
 /**
- * Created by bbrown on 3/16/2018.
+ * Created by bbrown on 3/16/2018
  */
 
-public class Utils {
-
-    private static Context context;
-
-    public static void init(Context ctx) {
-        context = ctx;
-    }
-
-    public static void dumpSpotData() {
-        Log.d(TAG, "Dump Spot ------------------------------");
-        for (SpotData sd : MainActivity.getSpotList()) {
-            Log.d(TAG, sd.getID() + " " + sd.getTown() + " " + sd.getIndustry() + " " + sd.getTrack());
-        }
-    }
-
-    public static void dumpCarData() {
-        Log.d(TAG, "Dump Car------------------------------");
-        for (CarData cd : MainActivity.getCarList()) {
-            Log.d(TAG, cd.getInitials() + " " + cd.getNumber() + "=Loc:" + cd.getCurrentLoc() + " Consist:" + cd.getConsist() + (cd.getInStorage() ? " Stored" : ""));
-        }
-    }
+class Utils {
 
     public static SpotData getSpotFromID(int id) {
         if (id == NONE) {
@@ -64,7 +42,7 @@ public class Utils {
     }
 
     // get the list of all towns
-    public static ArrayList<String> getTownList(boolean bAddAll) {
+    static ArrayList<String> getTownList(boolean bAddAll, Context context) {
         ArrayList<String> townList = new ArrayList<>();
         if (bAddAll) {
             townList.add(context.getResources().getString(R.string.all));
@@ -82,20 +60,8 @@ public class Utils {
         return townList;
     }
 
-    // get the list of cars in storage
-    public static ArrayList<CarData> getCarsInStorage() {
-        ArrayList<CarData> carList = new ArrayList<>();
-
-        for (CarData cd : MainActivity.getCarList()) {
-            if (cd.getInStorage()) {
-                carList.add(cd);
-            }
-        }
-        return carList;
-    }
-
     // get all cars - boolean to include cars in storage
-    public static ArrayList<CarData> getAllCars(boolean bInStorage) {
+    static ArrayList<CarData> getAllCars(boolean bInStorage) {
         ArrayList<CarData> carList = new ArrayList<>();
 
         if (bInStorage) {
@@ -111,7 +77,7 @@ public class Utils {
     }
 
     // get the list of cars for a given town or all towns. no cars in a consist or storage
-    public static ArrayList<CarData> getCarsInTown(String sTown) {
+    static ArrayList<CarData> getCarsInTown(String sTown) {
         ArrayList<CarData> carList = new ArrayList<>();
 
         for (CarData cd : MainActivity.getCarList()) {
@@ -135,7 +101,7 @@ public class Utils {
         return carList;
     }
 
-    public static int getConsistSize(int id) {
+    static int getConsistSize(int id) {
         int count = 0;
 
         for (CarData cd : MainActivity.getCarList()) {
@@ -148,7 +114,7 @@ public class Utils {
     }
 
     // get the list of cars for a given consistID and destination town (null for ignore town)
-    public static ArrayList<CarData> getCarsInConsist(int id, String sTown) {
+    static ArrayList<CarData> getCarsInConsist(int id, String sTown) {
         ArrayList<CarData> carList = new ArrayList<>();
 
         for (CarData cd : MainActivity.getCarList()) {
@@ -170,7 +136,7 @@ public class Utils {
     }
 
     // get the list of spots for a given town
-    public static ArrayList<SpotData> getSpotsInTown(String sTown) {
+    static ArrayList<SpotData> getSpotsInTown(String sTown) {
         ArrayList<SpotData> spotList = new ArrayList<>();
 
         // if town is null return the whole list
@@ -186,15 +152,11 @@ public class Utils {
         return spotList;
     }
 
-    public static int len(TextInputEditText et) {
-        return trim(et).length();
-    }
-
-    public static String trim(TextInputEditText et) {
+    static String trim(TextInputEditText et) {
         return et.getText().toString().trim();
     }
 
-    public static void messageBox(String sTitle, String sMessage, Context ctx) {
+    static void messageBox(String sTitle, String sMessage, Context ctx) {
         AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
         alertDialog.setTitle(sTitle);
         alertDialog.setMessage(sMessage);
@@ -208,7 +170,7 @@ public class Utils {
     }
 
     // remove any deleted spots from the car's spotlist
-    public static void removeAllDeadSpots() {
+    static void removeAllDeadSpots() {
         for (CarData cd : MainActivity.getCarList()) {
             cd.removeDeadSpots();
         }

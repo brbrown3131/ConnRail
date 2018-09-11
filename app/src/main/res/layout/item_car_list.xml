@@ -12,34 +12,34 @@
 
         <TextView
             android:id="@+id/tvCarInitials"
-            android:text="XX"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tvCarNumber"
-            android:text="12345"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_toRightOf="@id/tvCarInitials"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:layout_toEndOf="@id/tvCarInitials"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/small_margin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <ImageView
             android:id="@+id/ivCarError"
+            android:contentDescription="@string/error_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_toRightOf="@id/tvCarNumber"
+            android:layout_toEndOf="@id/tvCarNumber"
             android:paddingLeft="@dimen/small_margin"
+            android:paddingRight="@dimen/small_margin"
             android:src="@drawable/ic_error"/>
 
         <TextView
             android:id="@+id/tvCarType"
-            android:text="Boxcar"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -50,9 +50,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
     <ImageView
+        android:contentDescription="@string/error_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:src="@drawable/ic_error"/>
@@ -73,6 +75,7 @@
 
         <ImageView
             android:id="@+id/ivCurrent"
+            android:contentDescription="@string/crosshairs_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_crosshairs_gps"/>
@@ -100,7 +103,7 @@
             android:id="@+id/tvSpotTrackCurr"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="0dp"
-            android:gravity="right"
+            android:gravity="end"
             android:layout_weight="1"
             android:maxLines="1"
             android:ellipsize="end"
@@ -113,9 +116,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
+            android:contentDescription="@string/error_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_error"/>
@@ -132,9 +137,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
 
         <ImageView
+            android:contentDescription="@string/hold_hand_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_hold"/>
@@ -154,6 +161,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:contentDescription="@string/forward_arrow_icon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_forward"/>
@@ -181,7 +189,7 @@
             android:id="@+id/tvSpotTrackDest"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="0dp"
-            android:gravity="right"
+            android:gravity="end"
             android:layout_weight="1"
             android:maxLines="1"
             android:ellipsize="end"

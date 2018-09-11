@@ -25,19 +25,19 @@ import static com.connriver.connrail.MainActivity.USER_TYPE_SINGLE;
 import static com.connriver.connrail.MainActivity.USER_TYPE;
 
 /**
- * Created by user on 7/26/2018.
+ * Created by bbrown on 7/26/2018
  */
 
 public class UserTypeActivity extends AppCompatActivity {
     private RadioButton single, owner, remote;
     private String sRem;
     private int iType;
-    private ArrayList<String> listIP = new ArrayList<>();
+    private final ArrayList<String> listIP = new ArrayList<>();
     private AutoCompleteTextView actvIP;
     private ImageButton ib;
     private Button btnOK;
-    private static String ITYPE = "iType";
-    private static String SREM = "sRem";
+    private static final String ITYPE = "iType";
+    private static final String SREM = "sRem";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +89,7 @@ public class UserTypeActivity extends AppCompatActivity {
         loadIPs();
         actvIP = (AutoCompleteTextView) findViewById(R.id.actvTest);
         actvIP.setThreshold(1);
-        ArrayAdapter ad = new ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listIP);
+        ArrayAdapter<String> ad = new ArrayAdapter <>(this, android.R.layout.simple_dropdown_item_1line, listIP);
         actvIP.setAdapter(ad);
 
         actvIP.addTextChangedListener(new TextWatcher() {

@@ -1,6 +1,7 @@
 package com.connriver.connrail;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,31 +10,22 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 
 // displays a list of alerts in a ListView
-public class AlertList {
+class AlertList {
 
-    private ListView lv;
-    Context context;
-    private ArrayList<AlertData> listData; // car list to use
+    private final ListView lv;
+    private final Context context;
 
     // pass in the listview to use and the list of alerts
-    public AlertList(ListView lv, Context context, ArrayList<AlertData> listData) {
+    AlertList(ListView lv, Context context) {
         this.lv = lv;
         this.context = context;
-        this.listData = listData;
-    }
-
-    // return the CarData for the selected item
-    public AlertData getAlertData(int index) {
-        return listData.get(index);
     }
 
     // redisplay the list
     public void resetList() {
-        DataAdapter adapter = new DataAdapter(context, listData);
+        DataAdapter adapter = new DataAdapter(context);
         lv.setAdapter(adapter);
     }
 
@@ -43,14 +35,13 @@ public class AlertList {
     }
 
     private class DataAdapter extends ArrayAdapter<AlertData> {
-        private DataAdapter(Context context, ArrayList<AlertData> data) {
-            super(context, 0, data);
+        private DataAdapter(Context context) {
+            super(context, 0, MainActivity.alerts);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            AlertData ad = getItem(position);
-
+        @NonNull
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
@@ -64,9 +55,14 @@ public class AlertList {
                 holder = (ViewHolder) convertView.getTag();
             }
 
+            AlertData ad = getItem(position);
+
             // always show the car initials/number/type
-            holder.tvMessage.setText(ad.getMessage());
-            showIcon(holder, ad);
+            if (ad != null) {
+                holder.tvMessage.setText(ad.getMessage());
+                showIcon(holder, ad);
+            }
+
 
             return convertView;
         }

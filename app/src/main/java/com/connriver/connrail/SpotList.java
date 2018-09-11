@@ -1,6 +1,7 @@
 package com.connriver.connrail;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class SpotList {
+class SpotList {
 
-    private ListView lv;
-    private Context context;
-    private ArrayList<SpotData> spotListData; // car list to use
+    private final ListView lv;
+    private final Context context;
+    private final ArrayList<SpotData> spotListData; // car list to use
 
 
     public SpotList(ListView lv, Context context, ArrayList<SpotData> spotListData) {
@@ -58,9 +59,8 @@ public class SpotList {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            SpotData sd = getItem(position);
-
+        @NonNull
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
@@ -76,9 +76,13 @@ public class SpotList {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.tvSpotTown.setText(sd.getTown());
-            holder.tvSpotIndustry.setText(sd.getIndustry());
-            holder.tvSpotTrack.setText(sd.getTrack());
+            SpotData sd = getItem(position);
+
+            if (sd != null) {
+                holder.tvSpotTown.setText(sd.getTown());
+                holder.tvSpotIndustry.setText(sd.getIndustry());
+                holder.tvSpotTrack.setText(sd.getTrack());
+            }
             holder.tvDays.setText("");
 
             return convertView;

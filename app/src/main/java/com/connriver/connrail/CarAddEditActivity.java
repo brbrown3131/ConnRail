@@ -6,17 +6,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -39,7 +40,6 @@ import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
 import static com.connriver.connrail.MainActivity.MSG_DELETE_CAR_DATA;
 import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
-import static com.connriver.connrail.MainActivity.TAG;
 
 public class CarAddEditActivity extends AppCompatActivity {
     private TextInputEditText etInit;
@@ -48,17 +48,16 @@ public class CarAddEditActivity extends AppCompatActivity {
     private TextInputEditText etNotes;
     private Button btnAddSpot;
     private Button btnSave;
-    private Button btnDelete;
     private CarData cdEdit = null;
     private boolean bCarSpotDataChanged = false;
 
-    private ListView lvCarSpots;
+    private StaticListView lvCarSpots;
     private ArrayList<CarSpotData> listCarSpotData = null;
 
     private AlertDialog adAddSpot = null;
 
-    private static String SPOTLIST = "SpotList";
-    private static String DATACHANGED = "DataChanged";
+    private static final String SPOTLIST = "SpotList";
+    private static final String DATACHANGED = "DataChanged";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,7 @@ public class CarAddEditActivity extends AppCompatActivity {
         actvType.setAdapter(adapter);
 
         etNotes = (TextInputEditText) findViewById(R.id.etCarNotes);
-        lvCarSpots = (ListView) findViewById(R.id.lvCarSpots);
+        lvCarSpots = (StaticListView) findViewById(R.id.lvCarSpots);
 
         // automatically show the keyboard on a new but not an edit
         etInit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -167,7 +166,7 @@ public class CarAddEditActivity extends AppCompatActivity {
             }
         });
 
-        btnDelete = (Button) findViewById(R.id.btnCarDelete);
+        Button btnDelete = (Button) findViewById(R.id.btnCarDelete);
         btnDelete.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onDeleteClicked();
@@ -217,7 +216,7 @@ public class CarAddEditActivity extends AppCompatActivity {
         updateSpotList();
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (cdEdit == null) {
@@ -238,7 +237,7 @@ public class CarAddEditActivity extends AppCompatActivity {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
             }
         }
@@ -294,8 +293,7 @@ public class CarAddEditActivity extends AppCompatActivity {
 
     private void onSpotSelected(final int position) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_spot_days, null);
+        final View dialogView = View.inflate(this, R.layout.dialog_spot_days, null);
         builder.setView(dialogView);
         builder.setTitle(Utils.trim(etInit) + " " + Utils.trim(etNum));
 
@@ -360,8 +358,7 @@ public class CarAddEditActivity extends AppCompatActivity {
 
     private void editLadingInstruct(final TextView tvLading, final TextView tvInstruct) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_car_spot_info, null);
+        final View dialogView = View.inflate(this, R.layout.dialog_car_spot_info, null);
         builder.setView(dialogView);
         builder.setTitle(R.string.lading_title);
 
@@ -384,7 +381,10 @@ public class CarAddEditActivity extends AppCompatActivity {
 
         final AlertDialog ad = builder.create();
         ad.show();
-        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Window win = ad.getWindow();
+        if (win != null) {
+            win.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     // enable the save button if all requirements met
@@ -415,7 +415,7 @@ public class CarAddEditActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.button_save),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (!saveCar()) {
+                        if (saveCarAbort()) {
                             dialog.dismiss();
                         } else {
                             dialog.dismiss();
@@ -451,8 +451,7 @@ public class CarAddEditActivity extends AppCompatActivity {
 
         //launch spot list dialog
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_spot_list, null);
+        final View dialogView = View.inflate(this, R.layout.dialog_spot_list, null);
         builder.setView(dialogView);
         builder.setTitle(getResources().getString(R.string.select_spot));
 
@@ -532,15 +531,15 @@ public class CarAddEditActivity extends AppCompatActivity {
         return false; //ok
     }
 
-    private boolean saveCar() {
+    private boolean saveCarAbort() {
         // check for duplicate and message if found
         if (dupFound()) {
-            return false;
+            return true;
         }
 
         // check for valid spots and message if found
         if (invalidSpots()) {
-            return false;
+            return true;
         }
 
         cdEdit.setInitials(Utils.trim(etInit));
@@ -551,11 +550,11 @@ public class CarAddEditActivity extends AppCompatActivity {
 
         MainActivity.carAddEditDelete(cdEdit, false);
 
-        return true; // save successful
+        return false; // save successful
     }
 
     private void onSaveClicked() {
-        if (!saveCar()) {
+        if (saveCarAbort()) {
             return;
         }
         finish();
@@ -626,10 +625,8 @@ public class CarAddEditActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            CarSpotData csd = getItem(position);
-            SpotData sd = Utils.getSpotFromID(csd.getID());
-
+        @NonNull
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
@@ -645,6 +642,12 @@ public class CarAddEditActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
+            CarSpotData csd = getItem(position);
+            if (csd == null) {
+                return convertView;
+            }
+            SpotData sd = Utils.getSpotFromID(csd.getID());
+
             if (sd == null) {
                 holder.tvSpotTown.setText(getResources().getString(R.string.status_unknown));
                 holder.tvSpotIndustry.setText("");
@@ -654,7 +657,7 @@ public class CarAddEditActivity extends AppCompatActivity {
                 holder.tvSpotTown.setText(sd.getTown());
                 holder.tvSpotIndustry.setText(sd.getIndustry());
                 holder.tvSpotTrack.setText(sd.getTrack());
-                holder.tvSpotDays.setText(Integer.toString(csd.getHoldDays()) + " " + (csd.getHoldDays() == 1 ? getResources().getString(R.string.text_day) : getResources().getString(R.string.text_days)));
+                holder.tvSpotDays.setText(String.valueOf(csd.getHoldDays()) + " " + (csd.getHoldDays() == 1 ? getResources().getString(R.string.text_day) : getResources().getString(R.string.text_days)));
             }
 
             return convertView;

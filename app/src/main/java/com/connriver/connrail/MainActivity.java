@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
@@ -11,13 +12,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,23 +26,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // global defines ===============================================================
     public static final int CARDATA_SPOT_MAX = 4;
     public static final int NONE = -1;
-    public static final String TAG = "ConnRail";
+    //public static final String TAG = "ConnRail";
     // global defines ===============================================================
 
     // global data
-    private static ArrayList<CarData> gCarDataList =  new ArrayList<>(); // global car data
-    private static ArrayList<SpotData> gSpotDataList =  new ArrayList<>(); // global spot data
-    private static ArrayList<ConsistData> gConsistDataList =  new ArrayList<>(); // global spot data
+    private static final ArrayList<CarData> gCarDataList =  new ArrayList<>(); // global car data
+    private static final ArrayList<SpotData> gSpotDataList =  new ArrayList<>(); // global spot data
+    private static final ArrayList<ConsistData> gConsistDataList =  new ArrayList<>(); // global spot data
     private static int iSessionNumber = 0;
     public static boolean bShowInStorage = true;
 
-    public static final int ALERT_LOCATION = 1;
-    public static final int ALERT_SPOTS = 2;
+    private static final int ALERT_LOCATION = 1;
+    private static final int ALERT_SPOTS = 2;
 
     public static final int SOCKET_PORT = 8099;
     public static final int MSG_PING = 1;
     public static final int MSG_NO_PING = 2;
-    public static final int MSG_UPDATE = 3;
     public static final int MSG_REQUEST_FULL_DATA = 4;
     public static final int MSG_REQUEST_SESSION_DATA = 6;
     public static final int MSG_SESSION_DATA = 7;
@@ -65,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String INTENT_UPDATE_DATA = "intent_update_data";
 
     // intent data labels
-    //public static final String CAR_DATA_INDEX = "CarDataIndex";
     public static final String SPOT_DATA = "SpotData";
     public static final String CONSIST_DATA = "ConsistData";
     public static final String CAR_DATA = "CarData";
@@ -73,10 +70,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String CAR_INFO_PARENT = "Parent";
     public static final String PARENT_YARD = "YardMaster";
     public static final String PARENT_TRAIN = "TrainMaster";
-    public static final String PREFS_NAME = "ConnRailPrefs";
-    public static final String PREFS_SESSION_NUMBER = "SessionNumber";
-    public static final String PREFS_USER_TYPE = "UserType";
-    public static final String PREFS_OWNER_IP = "OwnerIP";
+    private static final String PREFS_NAME = "ConnRailPrefs";
+    private static final String PREFS_SESSION_NUMBER = "SessionNumber";
+    private static final String PREFS_USER_TYPE = "UserType";
+    private static final String PREFS_OWNER_IP = "OwnerIP";
     public static final String CURRENT_TAB = "CurrentTab";
 
     // user type and data
@@ -87,15 +84,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int GET_USER_TYPE = 1;
     public static final String USER_TYPE = "user_type";
     public static final String OWNER_IP = "owner_ip";
-    private static String sOwnerIP = null;
+    private String sOwnerIP = null;
 
-    private ListView lvAlerts;
-    private static ArrayList<AlertData> alerts = new ArrayList<>();
+    static final ArrayList<AlertData> alerts = new ArrayList<>();
 
-    private static TextView tvUserType;
-    private static TextView tvUserStatus;
-    private static TextView tvSession;
-    private static Button btnSession;
+    private TextView tvUserType;
+    private TextView tvUserStatus;
+    private TextView tvSession;
+    private Button btnSession;
 
     private static Owner mOwner = null;
     private static Remote mRemote = null;
@@ -104,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return iSessionNumber;
     }
 
-    public void incrSessionNumber() {
+    private void incrSessionNumber() {
         iSessionNumber++;
         SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
         editor.putInt(PREFS_SESSION_NUMBER, iSessionNumber);
@@ -112,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // if an owner, send the new day/session number to all remotes
         if (iUserType == USER_TYPE_OWNER && mOwner != null) {
-            mOwner.sendAll(MSG_SESSION_DATA, Integer.toString(iSessionNumber));
+            mOwner.sendAll(MSG_SESSION_DATA, String.valueOf(iSessionNumber));
         }
     }
 
@@ -120,9 +116,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // set the context for utils
-        Utils.init(this);
 
         // find all the ui elements
         tvUserType = (TextView) findViewById(R.id.tvUserType);
@@ -143,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -154,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // show the current user type
         displayUserType();
+
+        showSessionNumber();
     }
 
     public static ArrayList<CarData> getCarList() {
@@ -311,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showSessionNumber() {
-        tvSession.setText(Integer.toString(iSessionNumber));
+        tvSession.setText(String.valueOf(iSessionNumber));
     }
 
     public static void loadDBData(Context ctx) {
@@ -341,9 +336,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // add an alert to the list if any cars do not have a current location defined
     private AlertData alertLocations() {
         int count = 0;
+        int loc;
 
         for (CarData cd : gCarDataList) {
-            if (cd.getCurrentLoc() == NONE && !cd.getInStorage() && cd.getConsist() == NONE) {
+            loc = cd.getCurrentLoc();
+            if ((loc == NONE || Utils.getSpotFromID(loc) == null) && !cd.getInStorage() && cd.getConsist() == NONE) {
                 count++;
             }
         }
@@ -375,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showAlerts() {
-        lvAlerts = (ListView) findViewById(R.id.lvAlerts);
+        StaticListView lvAlerts = (StaticListView) findViewById(R.id.lvAlerts);
         alerts.clear();
 
         AlertData ad;
@@ -398,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             alerts.add(ad);
         }
 
-        AlertList al = new AlertList(lvAlerts, getBaseContext(), alerts);
+        AlertList al = new AlertList(lvAlerts, getBaseContext());
         al.resetList();
 
         // ListView Item Click Listener
@@ -509,12 +506,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (iUserType == USER_TYPE_REMOTE) {
             mRemote = new Remote(this, sOwnerIP);
         } else if (iUserType == USER_TYPE_OWNER) {
-            mOwner = new Owner(getApplicationContext(), this);
+            mOwner = new Owner(this, this);
         }
 
         if (bRequestData) {
             requestAllData();
         }
+
+        displayUserType();
     }
 
     private void displayUserType() {
@@ -524,7 +523,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             tvUserStatus.setText(getResources().getString(R.string.remote_disconnected));
             btnSession.setEnabled(false); // remote can't increment the day/session
         } else if (iUserType == USER_TYPE_OWNER) {
-            tvUserType.setText(getResources().getString(R.string.user_owner) +  " - " + getResources().getString(R.string.user_ip) + " " + mOwner.getIP());
+            tvUserType.setText(getResources().getString(R.string.user_owner) +  " - " + getResources().getString(R.string.user_ip) + " " + mOwner.getIP(this));
+            tvUserStatus.setText("");
             btnSession.setEnabled(true);
         } else {
             tvUserType.setText(R.string.user_single);
@@ -534,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -576,14 +576,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onOwnerDataUpdate(final int msgType, final String sData) {
+    public void onOwnerDataUpdate(final int iMsgType, final String sData) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                switch (msgType) {
+                switch (iMsgType) {
                     case MSG_PING:
                         tvUserStatus.setText(getResources().getString(R.string.remote_count) + " " + mOwner.getRemoteCount() );
                         break;
+                    default:
+                        updateUI(iMsgType, sData);
+
                 }
             }
         });

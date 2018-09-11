@@ -10,10 +10,10 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,26 +21,26 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
-import static com.connriver.connrail.MainActivity.MSG_DELETE_CAR_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_CONSIST_DATA;
 import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
-import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
-import static com.connriver.connrail.MainActivity.NONE;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_CONSIST_DATA;
 
-public class ConsistActivity extends AppCompatActivity {
+public class ConsistActivity extends AppCompatActivity implements DialogFragmentCarList.DialogListener {
 
     private ListView lv;
-    private ArrayList<CarData> availableList = new ArrayList<>();
     private CarList carsInConsist;
     private ConsistData consistData;
-    private AlertDialog adAddCar = null;
-    String sCurrentTown = null;
+    private String sCurrentTown = null;
     private int idConsist;
-    private CarData cdSelected = null;
 
-    static final int SET_CAR_INFO = 1;
+    private static final int SET_CAR_INFO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class ConsistActivity extends AppCompatActivity {
 
         Spinner spTown = (Spinner) findViewById(R.id.spTown);
         //fill the spinner list of towns
-        final ArrayList<String> townList = Utils.getTownList(true);
+        final ArrayList<String> townList = Utils.getTownList(true, this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, townList);
         spTown.setAdapter(adapter);
 
@@ -89,16 +89,33 @@ public class ConsistActivity extends AppCompatActivity {
         final Button btnConsistAdd = (Button) findViewById(R.id.btnConsistAdd);
         btnConsistAdd.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                addToConsist();
+                addToConsist2();
             }
         });
 
         updateView();
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);
+            if (msgType == MSG_DELETE_CONSIST_DATA || msgType == MSG_UPDATE_CONSIST_DATA) {
+                String sMsgData = intent.getStringExtra(MSG_DATA_TAG);
+                try {
+                    ConsistData cd =  new ConsistData(new JSONObject(sMsgData));
+                    if (cd.getID() == consistData.getID()) {
+                        if (msgType == MSG_DELETE_CONSIST_DATA) {
+                            finish();
+                        } else {
+                            consistData = cd;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             updateView();
         }
     };
@@ -113,6 +130,7 @@ public class ConsistActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+        updateView();
     }
 
 
@@ -147,7 +165,6 @@ public class ConsistActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     private void updateView() {
         setTitle(consistData.getName());
         carsInConsist = new CarList(lv, this, Utils.getCarsInConsist(idConsist, sCurrentTown));
@@ -158,8 +175,7 @@ public class ConsistActivity extends AppCompatActivity {
 
     private void editConsist() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_consist_info, null);
+        final View dialogView = View.inflate(this, R.layout.dialog_consist_info, null);
         builder.setView(dialogView);
         builder.setTitle(R.string.edit_consist);
 
@@ -177,7 +193,10 @@ public class ConsistActivity extends AppCompatActivity {
 
         final AlertDialog ad = builder.create();
         ad.show();
-        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Window win = ad.getWindow();
+        if (win != null) {
+            win.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
 
         Button ok = ad.getButton(AlertDialog.BUTTON_POSITIVE);
         ok.setOnClickListener(new View.OnClickListener() {
@@ -224,63 +243,17 @@ public class ConsistActivity extends AppCompatActivity {
         finish();
     }
 
-    private void addToConsist() {
+    private void addToConsist2() {
+        // launch the car list dialog
+        DialogFragmentCarList dFrag = DialogFragmentCarList.newInstance();
+        dFrag.setTown(sCurrentTown);
+        dFrag.setConsistID(idConsist);
+        dFrag.show(getFragmentManager(), "dlgCarList");
+    }
 
-        // only show cars not already in a consist, not being held and in the current town (null = all)
-        availableList.clear();
-        int sessNum = MainActivity.getSessionNumber();
-        for (CarData cd : Utils.getAllCars(false)) {
-            if (cd.getConsist() == NONE && sessNum >= cd.getHoldUntilDay()) {
-                if (sCurrentTown == null) {
-                    availableList.add(cd);
-                } else {
-                    int id = cd.getCurrentLoc();
-                    SpotData sd = Utils.getSpotFromID(id);
-                    if (sd != null && sd.getTown().equals(sCurrentTown)) {
-                        availableList.add(cd);
-                    }
-                }
-            }
-        }
-
-        //launch spot list dialog
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_car_list, null);
-        builder.setView(dialogView);
-        builder.setTitle(R.string.available_cars);
-
-        ListView lv = (ListView) dialogView.findViewById(R.id.carListView);
-        final CarList clAvail = new CarList(lv, getBaseContext(), availableList);
-        clAvail.setShowCurr(true);
-        clAvail.setShowDest(true);
-        clAvail.resetList();
-
-        // ListView Item Click Listener
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CarData cd = clAvail.getCarData(position);
-
-                cd.setConsist(idConsist);
-
-                MainActivity.carAddEditDelete(cd, false);
-
-                updateView();
-                if (adAddCar != null) {
-                    adAddCar.dismiss();
-                }
-            }
-        });
-
-        builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-            }
-        });
-
-        adAddCar = builder.create();
-        adAddCar.show();
-
+    @Override
+    public void updateResult() {
+        updateView();
     }
 
     private void messageDelete() {
@@ -304,7 +277,7 @@ public class ConsistActivity extends AppCompatActivity {
 
     // launch dialog to select the drop spot
     private void manageCar(int index) {
-        cdSelected = carsInConsist.getCarData(index);
+        CarData cdSelected = carsInConsist.getCarData(index);
 
         // launch the car info screen
         Intent intent = new Intent(this, CarInfoActivity.class);

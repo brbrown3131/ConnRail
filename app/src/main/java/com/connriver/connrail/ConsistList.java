@@ -1,6 +1,7 @@
 package com.connriver.connrail;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +13,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ConsistList {
+class ConsistList {
 
-    private ListView lv;
-    Context context;
-    private ArrayList<ConsistData> consistListData; // car list to use
+    private final ListView lv;
+    private final Context context;
+    private final ArrayList<ConsistData> consistListData; // car list to use
 
     public ConsistList(ListView lv, Context context, ArrayList<ConsistData> consistListData) {
         this.lv = lv;
@@ -56,9 +57,8 @@ public class ConsistList {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ConsistData cd = getItem(position);
-
+        @NonNull
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
@@ -72,8 +72,12 @@ public class ConsistList {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.tvName.setText(cd.getName());
-            holder.tvDesc.setText(cd.getDescription());
+            ConsistData cd = getItem(position);
+
+            if (cd != null) {
+                holder.tvName.setText(cd.getName());
+                holder.tvDesc.setText(cd.getDescription());
+            }
 
             return convertView;
         }

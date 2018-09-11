@@ -1,21 +1,29 @@
 package com.connriver.connrail;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.MSG_DELETE_CONSIST_DATA;
+import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
+import static com.connriver.connrail.MainActivity.MSG_UPDATE_CONSIST_DATA;
+
 public class ConsistListActivity extends AppCompatActivity {
 
-    private ListView lv;
     private ConsistList cl;
 
     @Override
@@ -23,7 +31,7 @@ public class ConsistListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_add);
 
-        lv = (ListView) findViewById(R.id.lvMain);
+        ListView lv = (ListView) findViewById(R.id.lvMain);
         cl = new ConsistList(lv, getBaseContext(), MainActivity.getConsistList());
 
         cl.resetList();
@@ -48,10 +56,28 @@ public class ConsistListActivity extends AppCompatActivity {
         });
     }
 
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);
+            if (msgType == MSG_DELETE_CONSIST_DATA || msgType == MSG_UPDATE_CONSIST_DATA) {
+                cl.resetList();
+            }
+        }
+    };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
+    }
+
     @Override
     protected void onResume() {
-        cl.resetList();
         super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+
+        cl.resetList();
     }
 
     private boolean dupFound(String sName) {
@@ -75,8 +101,7 @@ public class ConsistListActivity extends AppCompatActivity {
 
     private void addConsist() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_consist_info, null);
+        final View dialogView = View.inflate(this, R.layout.dialog_consist_info, null);
         builder.setView(dialogView);
         builder.setTitle(R.string.new_consist);
 
@@ -92,7 +117,10 @@ public class ConsistListActivity extends AppCompatActivity {
         final AlertDialog ad = builder.create();
         ad.show();
 
-        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Window win = ad.getWindow();
+        if (win != null) {
+            win.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
 
         Button ok = ad.getButton(AlertDialog.BUTTON_POSITIVE);
         ok.setOnClickListener(new View.OnClickListener() {

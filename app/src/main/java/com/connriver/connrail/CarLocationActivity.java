@@ -1,22 +1,15 @@
 package com.connriver.connrail;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
 
 /**
- * Created by bbrown on 3/16/2018.
+ * Created by bbrown on 3/16/2018
  */
 
 public class CarLocationActivity extends AppCompatActivity
@@ -50,9 +43,20 @@ public class CarLocationActivity extends AppCompatActivity
         viewPager.setCurrentItem(iTab);
 
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_crosshairs_gps);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_train);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_archive);
+
+        TabLayout.Tab tab;
+        tab = tabLayout.getTabAt(0);
+        if (tab != null) {
+            tab.setIcon(R.drawable.ic_crosshairs_gps);
+        }
+        tab = tabLayout.getTabAt(1);
+        if (tab != null) {
+            tab.setIcon(R.drawable.ic_train);
+        }
+        tab = tabLayout.getTabAt(2);
+        if (tab != null) {
+            tab.setIcon(R.drawable.ic_archive);
+        }
     }
 
     // send the updated CarData back and finish

@@ -11,7 +11,7 @@ import java.util.Iterator;
 import static com.connriver.connrail.MainActivity.NONE;
 
 /**
- * Created by user on 1/19/2018.
+ * Created by bbrown on 1/19/2018
  */
 
 public class CarData implements Serializable {
@@ -20,7 +20,7 @@ public class CarData implements Serializable {
     private String sNumber = "";
     private String sType = "";
     private String sNotes = "";
-    private ArrayList<CarSpotData> listSpots = new ArrayList<>(); // list of delivery spots
+    private final ArrayList<CarSpotData> listSpots = new ArrayList<>(); // list of delivery spots
     private int ixSpot; // index of target/current spot.
     private int ixHoldUntilDay; // day/session when the car is free to be moved.
     private int idConsist; // which train/consist this car is part of, -1 if none
@@ -54,10 +54,11 @@ public class CarData implements Serializable {
             idCurrentLoc = jsonData.getInt("cl");
             bIsInStorage = jsonData.getBoolean("is");
         } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    public JSONObject toJSON() {
+    JSONObject toJSON() {
         JSONObject jsonData = new JSONObject();
         try {
             jsonData.put("id", id);
@@ -80,6 +81,7 @@ public class CarData implements Serializable {
 
             return jsonData;
         } catch (JSONException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -100,21 +102,21 @@ public class CarData implements Serializable {
     }
 
     // car is moved to storage - clear any existing consists or current locations
-    public void setInStorage() {
+    void setInStorage() {
         bIsInStorage = true;
         idConsist = NONE;
         idCurrentLoc = NONE;
         ixHoldUntilDay = NONE;
     }
 
-    public boolean getInStorage() {
+    boolean getInStorage() {
         return bIsInStorage;
     }
 
-    public void setInitials(String s) {
+    void setInitials(String s) {
         sInitials = s;
     }
-    public String getInitials() {
+    String getInitials() {
         return sInitials;
     }
 
@@ -125,25 +127,21 @@ public class CarData implements Serializable {
         return sNumber;
     }
 
-    public void setType(String s) {
+    void setType(String s) {
         sType = s;
     }
-    public String getType() {
+    String getType() {
         return sType;
     }
 
-    public void setNotes(String s) {
+    void setNotes(String s) {
         sNotes = s;
     }
-    public String getNotes() {
+    String getNotes() {
         return sNotes;
     }
 
-    public int getSpotCount() {
-        return listSpots.size();
-    }
-
-    public boolean usesSpotID(int id) {
+    boolean usesSpotID(int id) {
         for (CarSpotData csd : listSpots) {
             if (csd.getID() == id) {
                 return true;
@@ -153,7 +151,7 @@ public class CarData implements Serializable {
     }
 
     // get a copy of the car list data for editing
-    public ArrayList<CarSpotData> getCarSpotDataCopy() {
+    ArrayList<CarSpotData> getCarSpotDataCopy() {
         ArrayList<CarSpotData> list = new ArrayList<>();
         for (CarSpotData csd : listSpots) {
             CarSpotData csdCopy = new CarSpotData(csd);
@@ -163,7 +161,7 @@ public class CarData implements Serializable {
     }
 
     // replace the car spot data
-    public void setCarSpotData(ArrayList<CarSpotData> list) {
+    void setCarSpotData(ArrayList<CarSpotData> list) {
         if (list.size() > MainActivity.CARDATA_SPOT_MAX) {
             return;
         }
@@ -174,7 +172,7 @@ public class CarData implements Serializable {
     }
 
     // set the current consist - clear in storage and current location
-    public void setConsist(int consist) {
+    void setConsist(int consist) {
         idConsist = consist;
         if (consist != NONE) {
             bIsInStorage = false;
@@ -182,25 +180,25 @@ public class CarData implements Serializable {
             ixHoldUntilDay = NONE;
         }
     }
-    public int getConsist() {
+    int getConsist() {
         return idConsist;
     }
 
-    public void setSpotIndex(int ix) {
+    void setSpotIndex(int ix) {
         ixSpot = ix;
     }
-    public int getSpotIndex() {
+    int getSpotIndex() {
         return ixSpot;
     }
 
-    public void setHoldUntilDay(int ix) {
+    void setHoldUntilDay(int ix) {
         ixHoldUntilDay = ix;
     }
-    public int getHoldUntilDay() {
+    int getHoldUntilDay() {
         return ixHoldUntilDay;
     }
 
-    public void setCurrentLoc(int idLoc) {
+    void setCurrentLoc(int idLoc) {
         //if same/current location selected - do nothing
         if (idLoc == idCurrentLoc) {
             return;
@@ -223,15 +221,19 @@ public class CarData implements Serializable {
         }
     }
 
-    public int getCurrentLoc() {
+    int getCurrentLoc() {
         return idCurrentLoc;
     }
 
-    public String getInfo() {
-        return sInitials + " " + sNumber + " [" + sType + "]";
+    String getInfo() {
+        if (sType.length() > 0) {
+            return sInitials + " " + sNumber + " [" + sType + "]";
+        } else {
+            return sInitials + " " + sNumber;
+        }
     }
 
-    public CarSpotData getNextSpot() {
+    CarSpotData getNextSpot() {
         if (listSpots.isEmpty()) {
             return null;
         }
@@ -242,7 +244,7 @@ public class CarData implements Serializable {
         return listSpots.get(ixSpot);
     }
 
-    public CarSpotData getCurrentSpot() {
+    CarSpotData getCurrentSpot() {
         if (listSpots.isEmpty()) {
             return null;
         }
@@ -264,7 +266,7 @@ public class CarData implements Serializable {
     }
 
     // remove any deleted spots from the car's spotlist
-    public void removeDeadSpots() {
+    void removeDeadSpots() {
         Iterator<CarSpotData> it = listSpots.iterator();
         while (it.hasNext()) {
             CarSpotData csd = it.next();
@@ -274,7 +276,7 @@ public class CarData implements Serializable {
         }
     }
 
-    public boolean invalidSpots() {
+    boolean invalidSpots() {
         int size = listSpots.size();
 
         // return true if there are fewer than 2 spots

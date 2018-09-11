@@ -1,8 +1,8 @@
 package com.connriver.connrail;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,24 +21,23 @@ import android.widget.ListView;
  */
 public class ConsistFragment extends Fragment {
 
-    private ListView lv;
     private ConsistList cl;
-    Listener mCallback;
+    private Listener mCallback;
 
     public interface Listener {
         void onConsistSelected(int id);
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (Listener) activity;
+            mCallback = (Listener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement Listener");
         }
     }
@@ -49,7 +49,7 @@ public class ConsistFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.activity_list_add, container, false);
 
-        lv = (ListView) view.findViewById(R.id.lvMain);
+        ListView lv = (ListView) view.findViewById(R.id.lvMain);
 
         cl = new ConsistList(lv, getContext(), MainActivity.getConsistList());
 
@@ -99,8 +99,7 @@ public class ConsistFragment extends Fragment {
 
     private void addConsist() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout.dialog_consist_info, null);
+        final View dialogView = View.inflate(getActivity(), R.layout.dialog_consist_info, null);
         builder.setView(dialogView);
         builder.setTitle(R.string.new_consist);
 
@@ -116,7 +115,10 @@ public class ConsistFragment extends Fragment {
         final AlertDialog ad = builder.create();
         ad.show();
 
-        ad.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        Window win = ad.getWindow();
+        if (win != null) {
+            win.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
 
         Button ok = ad.getButton(AlertDialog.BUTTON_POSITIVE);
         ok.setOnClickListener(new View.OnClickListener() {

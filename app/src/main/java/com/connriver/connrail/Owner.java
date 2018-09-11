@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.PowerManager;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,39 +39,34 @@ import static com.connriver.connrail.MainActivity.MSG_FULL_SPOT_DATA;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_CONSIST_DATA;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
-import static com.connriver.connrail.MainActivity.TAG;
 import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
 import static com.connriver.connrail.MainActivity.MSG_PING;
 import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
-import static com.connriver.connrail.MainActivity.MSG_UPDATE;
 import static com.connriver.connrail.MainActivity.SOCKET_PORT;
 import static com.connriver.connrail.MainActivity.getSessionNumber;
 
 /**
- * Created by user on 7/6/2018.
+ * Created by bbrown on 7/6/2018
  */
 
-public class Owner {
-    private Thread newSocketThread = null;
+class Owner {
     private ServerSocket mOwnerSocket = null;
-    private static ArrayList<Socket> listSockets = new ArrayList<>();
+    private static final ArrayList<Socket> listSockets = new ArrayList<>();
     private OnDataUpdate mCallback = null;
-    private Timer timer;
-    private PowerManager.WakeLock wl;
-    private WifiManager.WifiLock wfl;
-    private Context mContext;
+    private final Timer timer;
+    private final PowerManager.WakeLock wl;
+    private final WifiManager.WifiLock wfl;
     private static final int PING_INTERVAL = 5000;
 
     // start a thread that listens on a port for new remote socket connections
     // for each new socket listen for a message
 
-    public Owner(Context context, OnDataUpdate callback) {
+    Owner(OnDataUpdate callback, Context context) {
 
-        mContext = context;
         mCallback = callback;
 
         // the owner has to stay alive during sleep mode
-        PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "keep_app_alive");
         wl.acquire();
 
@@ -85,8 +79,6 @@ public class Owner {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                Log.d(TAG, "Owner Timer tick - count = " + getRemoteCount());
-
                 // send a ping to all attached remotes
                 sendAll(MSG_PING, "");
 
@@ -98,11 +90,11 @@ public class Owner {
         }, 0, PING_INTERVAL);
 
         // create a new worker thread and start
-        newSocketThread = new Thread(new NewSocketThread());
+        Thread newSocketThread = new Thread(new NewSocketThread());
         newSocketThread.start();
     }
 
-    public void close() {
+    void close() {
 
         timer.cancel();
 
@@ -114,7 +106,7 @@ public class Owner {
             try {
                 socket.close();
             } catch (IOException e) {
-                Log.d(TAG, "Owner Remote Socket Close Exception");
+                e.printStackTrace();
             }
         }
 
@@ -123,7 +115,7 @@ public class Owner {
             try {
                 mOwnerSocket.close();
             } catch (IOException e) {
-                Log.d(TAG, "Owner Socket Close Exception");
+                e.printStackTrace();
             }
         }
     }
@@ -144,7 +136,7 @@ public class Owner {
                     addSocket(socket);
                 }
             } catch (IOException e) {
-                Log.d(TAG, "Owner Socket Accept Exception");
+                e.printStackTrace();
             }
         }
     }
@@ -156,7 +148,6 @@ public class Owner {
                 try {
                     sx.close();
                 } catch (IOException e) {
-                    Log.d(TAG, "Owner Close Exception");
                     e.printStackTrace();
                 }
                 listSockets.remove(sx);
@@ -174,7 +165,7 @@ public class Owner {
 
     private class ListenThread extends Thread {
 
-        Socket mSocket;
+        final Socket mSocket;
         ListenThread(Socket socket) {
             mSocket = socket;
         }
@@ -199,17 +190,15 @@ public class Owner {
                         sMsgData = jsonData.getString(MSG_DATA_TAG);
 
                     } catch (JSONException e) {
-                        Log.d(TAG, "Owner JSON Exception");
+                        e.printStackTrace();
                     }
-
-                    Log.d(TAG, "Owner Got message. Type = " + iMsgType + " data:" + sMsgData);
 
                     handleRemoteMsg(mSocket, iMsgType, sMsgData);
                 }
 
 
             } catch (IOException e) {
-                Log.d(TAG, "Owner readUTF Exception");
+                e.printStackTrace();
             }
         }
     }
@@ -219,7 +208,7 @@ public class Owner {
 
         switch (iMsgType) {
             case MSG_REQUEST_SESSION_DATA:
-                send(socket, MSG_SESSION_DATA, Integer.toString(getSessionNumber()));
+                send(socket, MSG_SESSION_DATA, String.valueOf(getSessionNumber()));
                 return;
             case MSG_REQUEST_FULL_DATA:
                 sendAllTables(socket);
@@ -229,7 +218,7 @@ public class Owner {
                 try {
                     MainActivity.spotAddEditDelete(new SpotData(new JSONObject(sMsgData)), true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
 
                 break;
@@ -238,7 +227,7 @@ public class Owner {
                 try {
                     MainActivity.spotAddEditDelete(new SpotData(new JSONObject(sMsgData)), false);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
                 break;
 
@@ -246,7 +235,7 @@ public class Owner {
                 try {
                     MainActivity.consistAddEditDelete(new ConsistData(new JSONObject(sMsgData)), true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
 
                 break;
@@ -255,7 +244,7 @@ public class Owner {
                 try {
                     MainActivity.consistAddEditDelete(new ConsistData(new JSONObject(sMsgData)), false);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
                 break;
 
@@ -263,7 +252,7 @@ public class Owner {
                 try {
                     MainActivity.carAddEditDelete(new CarData(new JSONObject(sMsgData)), true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
 
                 break;
@@ -272,7 +261,7 @@ public class Owner {
                 try {
                     MainActivity.carAddEditDelete(new CarData(new JSONObject(sMsgData)), false);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
                 break;
         }
@@ -321,6 +310,7 @@ public class Owner {
             jsonData.put(MSG_DATA_TAG, sData);
             return jsonData.toString();
         } catch (JSONException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -333,7 +323,7 @@ public class Owner {
 
     private class SendSocket extends AsyncTask<Void, Void, Void> {
 
-        private String sOut;
+        private final String sOut;
         private Socket targetSocket = null;
 
         public SendSocket(Socket socket, String sx) {
@@ -345,10 +335,9 @@ public class Owner {
         protected Void doInBackground(Void... params) {
             try {
                 DataOutputStream dos = new DataOutputStream(targetSocket.getOutputStream());
-                Log.d(TAG, "Sending:" + sOut);
                 dos.writeUTF(sOut);
             } catch (IOException e) {
-                Log.d(TAG, "Owner writeUTF Exception");
+                e.printStackTrace();
             }
 
             return null;
@@ -356,16 +345,16 @@ public class Owner {
     }
 
     // send the update to all remotes
-    public void sendAll(int msgType, String data) {
+    void sendAll(int msgType, String data) {
         SendAllSockets sas = new SendAllSockets(buildMessage(msgType, data));
         sas.execute();
     }
 
     private class SendAllSockets extends AsyncTask<Void, Void, Void> {
 
-        private String sOut;
+        private final String sOut;
 
-        public SendAllSockets(String sx) {
+        SendAllSockets(String sx) {
             sOut = sx;
         }
 
@@ -374,10 +363,8 @@ public class Owner {
             for (Socket sx : listSockets) {
                 try {
                     DataOutputStream dos = new DataOutputStream(sx.getOutputStream());
-                    Log.d(TAG, "Owner Sending:" + sOut);
                     dos.writeUTF(sOut);
                 } catch (IOException e) {
-                    Log.d(TAG, "Owner Sending Exception");
                     e.printStackTrace();
                     listSockets.remove(sx);
                 }
@@ -387,20 +374,20 @@ public class Owner {
         }
     }
 
-    public String getIP() {
-        String ret = findIP_WIFI();
+    String getIP(Context context) {
+        String ret = findIP_WIFI(context);
         if (ret == null) {
-            ret = findIP_Internet();
+            ret = findIP_Internet(context);
         }
         return ret;
     }
 
-    public int getRemoteCount() {
+    int getRemoteCount() {
         return listSockets.size();
     }
 
-    private String findIP_WIFI() {
-        WifiManager wifiManager = (WifiManager) mContext.getSystemService(WIFI_SERVICE);
+    private String findIP_WIFI(Context context) {
+        WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(WIFI_SERVICE);
         int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
 
         // Convert little-endian to big-endian if needed
@@ -420,7 +407,7 @@ public class Owner {
         return ipAddressString;
     }
 
-    private String findIP_Internet() {
+    private String findIP_Internet(Context context) {
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
                 NetworkInterface intf = en.nextElement();
@@ -431,14 +418,14 @@ public class Owner {
                     }
                 }
             }
-        } catch (SocketException ex) {
-            Log.d(TAG, "Owner Socket Exception");
+        } catch (SocketException e) {
+            e.printStackTrace();
         }
-        return "Not Found";
+        return context.getString(R.string.not_found);
     }
 
 
-    public interface OnDataUpdate {
+    interface OnDataUpdate {
         void onOwnerDataUpdate(int msgType, String sData);
     }
 

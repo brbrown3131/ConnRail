@@ -1,19 +1,13 @@
 package com.connriver.connrail;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -27,16 +21,16 @@ import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
 import static com.connriver.connrail.MainActivity.MSG_DELETE_CAR_DATA;
 import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
-import static com.connriver.connrail.MainActivity.TAG;
+import static com.connriver.connrail.MainActivity.NONE;
 
 /**
- * Created by bbrown on 3/16/2018.
+ * Created by bbrown on 3/16/2018
  */
 
-public class CarInfoActivity extends AppCompatActivity implements DialogFragmentSpotList.EditDialogListener {
+public class CarInfoActivity extends AppCompatActivity implements DialogFragmentSpotList.DialogListener {
 
     private CarData cd = null;
-    private String sParent = null;
+    private String sParent = MainActivity.PARENT_YARD; //yardmaster by default
     private String sCurrentTown = null;
 
     @Override
@@ -52,7 +46,7 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
     private Intent getParentActivity() {
         Intent i;
 
-        if (sParent != null && sParent.equals(MainActivity.PARENT_YARD)) {
+        if (sParent.equals(MainActivity.PARENT_YARD)) {
             i = new Intent(this, YardListActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         } else {
@@ -144,7 +138,7 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
         }
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -154,14 +148,17 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
                 try {
                     CarData cdTemp =  new CarData(new JSONObject(sMsgData));
                     if (cdTemp.getID() == cd.getID()) {
-                        if (msgType == MSG_DELETE_CAR_DATA) {
+                        // finish if car deleted, moved into storage, parent is yardmaster and in a train, or parent is trainmaster and in a new train (or none)
+                        if (msgType == MSG_DELETE_CAR_DATA || cdTemp.getInStorage() ||
+                                (sParent.equals(MainActivity.PARENT_YARD) && cdTemp.getCurrentLoc() == NONE) ||
+                                (sParent.equals(MainActivity.PARENT_TRAIN) && cdTemp.getConsist() != cd.getConsist())      ) {
                             finish();
                         } else {
                             cd = cdTemp;
                         }
                     }
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
             }
 
@@ -242,7 +239,6 @@ public class CarInfoActivity extends AppCompatActivity implements DialogFragment
         // launch the spot list dialog and set the current car data and town selected (if any)
         DialogFragmentSpotList dFrag = DialogFragmentSpotList.newInstance();
         dFrag.setCarData(cd);
-        dFrag.setShowCurrentTown(true);
         dFrag.setTown(sCurrentTown);
         dFrag.show(getFragmentManager(), "dlgSpotList");
     }

@@ -4,21 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    tools:context="com.connriver.connrail.CarLocationListActivity">
+    tools:context="com.connriver.connrail.CarLocationListActivity"
+    tools:ignore="UseCompoundDrawables">
 
 
     <ImageView
         android:id="@+id/ivIcon"
+        android:contentDescription="@string/error_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:src="@drawable/ic_error"/>
 
     <TextView
         android:id="@+id/tvMessage"
-        android:layout_marginLeft="@dimen/small_margin"
+        android:layout_marginStart="@dimen/small_margin"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
-        android:text="[message]"
         android:layout_height="wrap_content" />
 
 </LinearLayout>

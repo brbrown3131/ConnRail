@@ -19,7 +19,6 @@ import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
 
 public class CarListActivity extends AppCompatActivity {
 
-    private ListView lv;
     private CarList cl;
 
     @Override
@@ -27,7 +26,7 @@ public class CarListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_add);
 
-        lv = (ListView) findViewById(R.id.lvMain);
+        ListView lv = (ListView) findViewById(R.id.lvMain);
         cl = new CarList(lv, getBaseContext(), MainActivity.getCarList());
         cl.setShowCurr(false);
         cl.setShowDest(false);
@@ -53,7 +52,7 @@ public class CarListActivity extends AppCompatActivity {
         });
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);

@@ -1,7 +1,7 @@
 package com.connriver.connrail;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,22 +13,22 @@ import android.widget.Button;
  * A simple {@link Fragment} subclass.
  */
 public class StorageFragment extends Fragment {
-    Listener mCallback;
+    private Listener mCallback;
 
     public interface Listener {
-        public void onStorageSelected();
+        void onStorageSelected();
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (Listener) activity;
+            mCallback = (Listener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement Listener");
         }
     }

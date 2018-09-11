@@ -5,7 +5,7 @@
 
     <TextView
         android:id="@+id/tvSpotTown"
-        android:text="Town"
+        android:text="@string/town"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -14,7 +14,7 @@
         android:id="@+id/tvSpotDays"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_height="wrap_content" />
 
     <LinearLayout
@@ -25,7 +25,7 @@
 
         <TextView
             android:id="@+id/tvSpotIndustry"
-            android:text="Industry"
+            android:text="@string/industry"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -35,13 +35,13 @@
 
         <TextView
             android:id="@+id/tvSpotTrack"
-            android:text="Track"
+            android:text="@string/track"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:maxLines="1"
             android:ellipsize="end"
-            android:gravity="right"
+            android:gravity="end"
             android:layout_height="wrap_content" />
     </LinearLayout>
 

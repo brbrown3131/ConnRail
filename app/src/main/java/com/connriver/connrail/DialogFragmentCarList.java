@@ -3,32 +3,35 @@ package com.connriver.connrail;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
+
 
 import java.util.ArrayList;
 
+import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
+import static com.connriver.connrail.MainActivity.NONE;
+
 /**
- * Created by bbrown on 3/16/2018.
+ * Created by bbrown on 3/16/2018
  */
 
 public class DialogFragmentCarList extends DialogFragment {
 
-    private CarData cd;
+    private CarList clAvail;
+    private ListView lvCars;
     private String sTown = null;
-    private boolean bShowCurrentTown = true;
-    SpotList spotList;
-
-    private ListView lvSpots;
-    private TextView tvCurr;
-    private Spinner spTown;
+    private final ArrayList<CarData> availableList = new ArrayList<>();
+    private int idConsist = NONE;
 
     static DialogFragmentCarList newInstance() {
         return new DialogFragmentCarList();
@@ -38,23 +41,15 @@ public class DialogFragmentCarList extends DialogFragment {
         sTown = sx;
     }
 
-    public void setCarData(CarData cd) {
-        this.cd = cd;
-    }
-
-    public void setShowCurrentTown(boolean bx) {
-        bShowCurrentTown = bx;
+    public void setConsistID(int id) {
+        idConsist = id;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        if (cd == null) {
-            return null;
-        }
-
-        builder.setTitle(cd.getInfo());
+        builder.setTitle(R.string.available_cars);
 
         builder.setView(createView());
 
@@ -68,59 +63,64 @@ public class DialogFragmentCarList extends DialogFragment {
         return builder.create();
     }
 
-    private View createView() {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        View dialogView = inflater.inflate(R.layout.dialog_spot_list, null);
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateView();
+        }
+    };
 
-        // load all the controls
-        lvSpots = (ListView) dialogView.findViewById(R.id.spotListView);
-        tvCurr = (TextView) dialogView.findViewById(R.id.tvCurrLoc);
-        spTown = (Spinner) dialogView.findViewById(R.id.spTown);
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mReceiver);
+    }
 
-        // if we want to display the list of towns to choose from
-        if (bShowCurrentTown) {
-            //fill the spinner list of towns
-            final ArrayList<String> townList = Utils.getTownList(true);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
-            spTown.setAdapter(adapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mReceiver, new IntentFilter(INTENT_UPDATE_DATA));
+    }
 
-            if (sTown != null) {
-                for (int ix = 1; ix < townList.size(); ix++) {
-                    if (sTown.equalsIgnoreCase(townList.get(ix))) {
-                        spTown.setSelection(ix);
-                        break;
+    private void updateView() {
+        // only show cars not already in a consist, not being held and in the current town (null = all)
+        availableList.clear();
+        int sessNum = MainActivity.getSessionNumber();
+        for (CarData cd : Utils.getAllCars(false)) {
+            if (cd.getConsist() == NONE && sessNum >= cd.getHoldUntilDay()) {
+                if (sTown == null) {
+                    availableList.add(cd);
+                } else {
+                    int id = cd.getCurrentLoc();
+                    SpotData sd = Utils.getSpotFromID(id);
+                    if (sd != null && sd.getTown().equals(sTown)) {
+                        availableList.add(cd);
                     }
-
                 }
             }
-
-            spTown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-                    if (position == 0) {
-                        fillSpotList(null);
-                    } else {
-                        fillSpotList(townList.get(position));
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parentView) {
-                }
-            });
-        } else {
-            tvCurr.setVisibility(View.GONE);
-            spTown.setVisibility(View.GONE);
-            fillSpotList(sTown);
         }
 
+        clAvail = new CarList(lvCars, getActivity(), availableList);
+        clAvail.setShowCurr(true);
+        clAvail.setShowDest(true);
+        clAvail.resetList();
+    }
+
+    private View createView() {
+        View dialogView = View.inflate(getActivity(), R.layout.dialog_car_list, null);
+
+        // load all the controls
+        lvCars = (ListView) dialogView.findViewById(R.id.carListView);
+
+        updateView();
 
         // ListView Item Click Listener
-        lvSpots.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvCars.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SpotData sd = spotList.getSpotData(position);
-                cd.setCurrentLoc(sd.getID());
+                CarData cd = clAvail.getCarData(position);
+                cd.setConsist(idConsist);
+                MainActivity.carAddEditDelete(cd, false);
                 done();
             }
         });
@@ -128,18 +128,13 @@ public class DialogFragmentCarList extends DialogFragment {
         return dialogView;
     }
 
-    private void fillSpotList(String sTown) {
-        // fill the spot list
-        spotList = new SpotList(lvSpots, getActivity(), Utils.getSpotsInTown(sTown));
-        spotList.resetList();
-    }
 
-    public interface EditDialogListener {
+    public interface DialogListener {
         void updateResult();
     }
 
     private void done() {
-        EditDialogListener activity = (EditDialogListener) getActivity();
+        DialogListener activity = (DialogListener) getActivity();
         activity.updateResult();
         dismiss();
     }

@@ -1,7 +1,6 @@
 package com.connriver.connrail;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +24,6 @@ import static com.connriver.connrail.MainActivity.MSG_REQUEST_SESSION_DATA;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_CAR_DATA;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_CONSIST_DATA;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
-import static com.connriver.connrail.MainActivity.TAG;
 import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
 import static com.connriver.connrail.MainActivity.MSG_NO_PING;
 import static com.connriver.connrail.MainActivity.MSG_PING;
@@ -33,26 +31,25 @@ import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
 import static com.connriver.connrail.MainActivity.SOCKET_PORT;
 
 /**
- * Created by user on 7/6/2018.
+ * Created by bbrown on 7/6/2018
  */
 
-public class Remote {
+class Remote {
 
-    private String sIP;
+    private final String sIP;
     private Socket mSocket = null;
-    private Thread listenThread = null;
     private OnDataUpdate mCallback = null;
-    private Timer timer;
+    private final Timer timer;
     private boolean bConnected = false;
     private boolean bRequestAllData = true;
     private static final int TIMEOUT_INTERVAL = 10000;
 
-    public Remote(OnDataUpdate callback, String sx) {
+    Remote(OnDataUpdate callback, String sx) {
         sIP = sx;
         mCallback = callback;
 
         // create a new worker thread and start
-        listenThread = new Thread(new ListenThread());
+        Thread listenThread = new Thread(new ListenThread());
         listenThread.start();
 
         timer = new Timer();
@@ -70,7 +67,7 @@ public class Remote {
 
     }
 
-    public void close() {
+    void close() {
         // kill the connected timer
         timer.cancel();
 
@@ -85,6 +82,7 @@ public class Remote {
             jsonData.put(MSG_DATA_TAG, sData);
             return jsonData.toString();
         } catch (JSONException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -112,17 +110,14 @@ public class Remote {
                         sMsgData = jsonData.getString(MSG_DATA_TAG);
 
                     } catch (JSONException e) {
-                        Log.d(TAG, "Remote JSON Exception");
+                        e.printStackTrace();
                     }
-
-                    Log.d(TAG, "Got data:" + "Type:" + iMsgType + " Data:" + sMsgData);
 
                     // do something with the owner message
                     handleOwnerMsg(iMsgType, sMsgData);
                 }
 
             } catch (IOException e) {
-                Log.d(TAG, "Remote readUTF Exception");
                 e.printStackTrace();
             }
         }
@@ -157,7 +152,7 @@ public class Remote {
                 try {
                     MainActivity.updateSpot(new SpotData(new JSONObject(sMsgData)), true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
 
                 break;
@@ -166,7 +161,7 @@ public class Remote {
                 try {
                     MainActivity.updateSpot(new SpotData(new JSONObject(sMsgData)), false);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
                 break;
 
@@ -174,7 +169,7 @@ public class Remote {
                 try {
                     MainActivity.updateConsist(new ConsistData(new JSONObject(sMsgData)), true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
 
                 break;
@@ -183,7 +178,7 @@ public class Remote {
                 try {
                     MainActivity.updateConsist(new ConsistData(new JSONObject(sMsgData)), false);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
                 break;
 
@@ -191,7 +186,7 @@ public class Remote {
                 try {
                     MainActivity.updateCar(new CarData(new JSONObject(sMsgData)), true);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
 
                 break;
@@ -200,7 +195,7 @@ public class Remote {
                 try {
                     MainActivity.updateCar(new CarData(new JSONObject(sMsgData)), false);
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
                 break;
 
@@ -221,7 +216,7 @@ public class Remote {
                 MainActivity.getSpotList().add(new SpotData(jArray.getJSONObject(ix)));
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Remote JSON Exception");
+            e.printStackTrace();
         }
     }
 
@@ -234,7 +229,7 @@ public class Remote {
                 MainActivity.getConsistList().add(new ConsistData(jArray.getJSONObject(ix)));
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Remote JSON Exception");
+            e.printStackTrace();
         }
     }
 
@@ -247,19 +242,19 @@ public class Remote {
                 MainActivity.getCarList().add(new CarData(jArray.getJSONObject(ix)));
             }
         } catch (JSONException e) {
-            Log.d(TAG, "Remote JSON Exception");
+            e.printStackTrace();
         }
     }
 
-    public void send(int iMsgType, String sData) {
+    void send(int iMsgType, String sData) {
         SendSocket ss = new SendSocket(buildMessage(iMsgType, sData));
         ss.execute();
     }
 
     private class SendSocket extends AsyncTask<Void, Void, Void> {
-        private String sOut;
+        private final String sOut;
 
-        public SendSocket(String sx) {
+        SendSocket(String sx) {
            sOut = sx;
         }
 
@@ -269,10 +264,9 @@ public class Remote {
             if (mSocket != null) {
                 try {
                     DataOutputStream dos = new DataOutputStream(mSocket.getOutputStream());
-                    Log.d(TAG, "Sending:" + sOut);
                     dos.writeUTF(sOut);
                 } catch (IOException e) {
-                    Log.d(TAG, "Remote writeUTF Exception");
+                    e.printStackTrace();
                 }
             }
 
@@ -290,7 +284,7 @@ public class Remote {
                     mSocket.close();
                     mSocket = null;
                 } catch (IOException e) {
-                    Log.d(TAG, "Remote Socket Close Exception");
+                    e.printStackTrace();
                 }
             }
 
@@ -298,7 +292,7 @@ public class Remote {
         }
     }
 
-    public interface OnDataUpdate {
+    interface OnDataUpdate {
         void onRemoteDataUpdate(int msgType, String sData);
     }
 

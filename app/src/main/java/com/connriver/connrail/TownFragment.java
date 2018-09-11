@@ -1,7 +1,6 @@
 package com.connriver.connrail;
 
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,19 +36,18 @@ public class TownFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (Listener) activity;
+            mCallback = (Listener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement Listener");
         }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -97,7 +94,7 @@ public class TownFragment extends Fragment {
 
     private void fillTownList() {
         //fill the spinner list of towns
-        townList = Utils.getTownList(true);
+        townList = Utils.getTownList(true, getActivity());
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, townList);
         spTown.setAdapter(adapter);
         if (sCurrentTown != null) {
@@ -110,7 +107,7 @@ public class TownFragment extends Fragment {
         }
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             fillTownList();

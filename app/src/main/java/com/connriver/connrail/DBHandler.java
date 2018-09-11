@@ -4,31 +4,22 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 import static com.connriver.connrail.MainActivity.*;
 
 /**
- * Created by user on 1/24/2018.
+ * Created by bbrown on 1/24/2018
  */
 
-public class DBHandler {
+class DBHandler {
     private SQLiteDatabase DB;
-    private static String DBName = "layout1"; //TODO allow more than one - setting name
-    private static final int version = '1';
-    private static Context currentContext;
+    private static final String DBName = "layout1";
     private static final String CAR_DATA_TABLE = "CarData";
     private static final String SPOT_DATA_TABLE = "SpotData";
     private static final String CONSIST_DATA_TABLE = "ConsistData";
 
-    // TODO allow separate server - pc, cloud
-
-    // allow the default name to be changed
-    public void setDbName(String sx) {
-        DBName = sx;
-    }
     public String getDbName() {
         return DBName;
     }
@@ -43,11 +34,11 @@ public class DBHandler {
     }
 
     private void initDB(Context context) {
-        currentContext = context;
 
         try {
-            DB = currentContext.openOrCreateDatabase(DBName, 0, null);
+            DB = context.openOrCreateDatabase(DBName, 0, null);
         } catch (SQLiteException e) {
+            e.printStackTrace();
         }
         if (DB == null) {
             return;

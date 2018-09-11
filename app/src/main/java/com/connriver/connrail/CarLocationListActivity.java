@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -15,19 +14,15 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import static com.connriver.connrail.MainActivity.INTENT_UPDATE_DATA;
-import static com.connriver.connrail.MainActivity.MSG_DELETE_SPOT_DATA;
-import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
-import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
 
 public class CarLocationListActivity extends AppCompatActivity {
 
     private ListView lv;
     private CarList cl;
     private String sTown = null;
-    private CarData cdSelected = null;
     private int iTab = 0;
 
-    static final int SET_LOCATION = 1;
+    private static final int SET_LOCATION = 1;
 
     private void resetList() {
         // get all the cars. town selected will only be used to pass to spot selection
@@ -67,7 +62,7 @@ public class CarLocationListActivity extends AppCompatActivity {
         });
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // just reset the list on any change
@@ -89,7 +84,7 @@ public class CarLocationListActivity extends AppCompatActivity {
 
     private void selectSpot(int ixCarData) {
         // get which car is selected
-        cdSelected = cl.getCarData(ixCarData);
+        CarData cdSelected = cl.getCarData(ixCarData);
         if (cdSelected == null){
             return;
         }

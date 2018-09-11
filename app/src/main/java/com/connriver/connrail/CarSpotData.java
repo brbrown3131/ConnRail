@@ -6,33 +6,34 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 /**
- *  Created by bbrown on 3/9/2018.
+ *  Created by bbrown on 3/9/2018
     List item for each car - where it is going, how many days to hold there and lading/instructions */
 
-public class CarSpotData implements Serializable {
+class CarSpotData implements Serializable {
     private int id; // id of the spot/location
     private int iHoldDays; // how many days to hold it
     private String sLading; // what's in the car going to this location
     private String sInstructions; // any special instructions
 
-    public CarSpotData(int id, int ihold) {
+    CarSpotData(int id, int iHold) {
         this.id = id;
-        iHoldDays = ihold;
+        iHoldDays = iHold;
         sLading = "";
         sInstructions = "";
     }
 
-    public CarSpotData(JSONObject jsonData) {
+    CarSpotData(JSONObject jsonData) {
         try {
             id = jsonData.getInt("id");
             iHoldDays = jsonData.getInt("iHoldDays");
             sLading = jsonData.getString("sLading");
             sInstructions = jsonData.getString("sInstructions");
         } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
-    public JSONObject toJSON() {
+    JSONObject toJSON() {
         JSONObject jsonData = new JSONObject();
         try {
             jsonData.put("id", id);
@@ -41,6 +42,7 @@ public class CarSpotData implements Serializable {
             jsonData.put("sInstructions", sInstructions);
             return jsonData;
         } catch (JSONException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -72,28 +74,25 @@ public class CarSpotData implements Serializable {
     public int getID() {
         return id;
     }
-    public void setID(int id) {
-        id = id;
-    }
 
-    public int getHoldDays() {
+    int getHoldDays() {
         return iHoldDays;
     }
-    public void setHoldDays(int days) {
+    void setHoldDays(int days) {
         iHoldDays = days;
     }
 
-    public String getLading() {
+    String getLading() {
         return sLading;
     }
-    public void setLading(String sx) {
+    void setLading(String sx) {
         sLading = sx;
     }
 
-    public String getInstructions() {
+    String getInstructions() {
         return sInstructions;
     }
-    public void setInstructions(String sx) {
+    void setInstructions(String sx) {
         sInstructions = sx;
     }
 }

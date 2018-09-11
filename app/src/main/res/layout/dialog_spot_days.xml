@@ -17,7 +17,7 @@
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/town"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_width="match_parent"
                 android:layout_weight=".7"
                 android:layout_height="wrap_content" />
@@ -25,9 +25,9 @@
             <TextView
                 android:id="@+id/tvSpotTown"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="[town]"
                 android:layout_weight=".3"
                 android:paddingLeft="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -40,7 +40,7 @@
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/industry"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_width="match_parent"
                 android:layout_weight=".7"
                 android:layout_height="wrap_content" />
@@ -48,9 +48,9 @@
             <TextView
                 android:id="@+id/tvSpotIndustry"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="[industry]"
                 android:layout_weight=".3"
                 android:paddingLeft="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -63,7 +63,7 @@
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/track"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_width="match_parent"
                 android:layout_weight=".7"
                 android:layout_height="wrap_content" />
@@ -71,9 +71,9 @@
             <TextView
                 android:id="@+id/tvSpotTrack"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="[track]"
                 android:layout_weight=".3"
                 android:paddingLeft="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -104,7 +104,7 @@
                     <TextView
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="@string/lading"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:layout_width="match_parent"
                         android:layout_weight=".65"
                         android:layout_height="wrap_content" />
@@ -112,15 +112,14 @@
                     <TextView
                         android:id="@+id/tvSpotLading"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="[lading]"
                         android:layout_weight=".35"
                         android:paddingLeft="@dimen/small_margin"
+                        android:paddingRight="@dimen/small_margin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_below="@+id/llLading"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
@@ -128,7 +127,7 @@
                     <TextView
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="@string/instructions"
-                        android:gravity="right"
+                        android:gravity="end"
                         android:layout_width="match_parent"
                         android:layout_weight=".65"
                         android:layout_height="wrap_content" />
@@ -136,9 +135,9 @@
                     <TextView
                         android:id="@+id/tvSpotInstructions"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="[instructions]"
                         android:layout_weight=".35"
                         android:paddingLeft="@dimen/small_margin"
+                        android:paddingRight="@dimen/small_margin"
                         android:maxLines="2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
@@ -148,6 +147,7 @@
 
         <ImageView
             android:id="@+id/btnEdit"
+            android:contentDescription="@string/edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
@@ -179,6 +179,7 @@
                 android:id="@+id/npDays"
                 android:layout_width="match_parent"
                 android:paddingLeft="@dimen/small_margin"
+                android:paddingRight="@dimen/small_margin"
                 android:layout_height="wrap_content"
                 android:fadeScrollbars="true" />
 

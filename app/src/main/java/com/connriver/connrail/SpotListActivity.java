@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,7 +19,7 @@ import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
 
 public class SpotListActivity extends AppCompatActivity {
 
-    SpotList sl;
+    private SpotList sl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,7 @@ public class SpotListActivity extends AppCompatActivity {
         });
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             int msgType = intent.getIntExtra(MSG_TYPE_TAG, -1);

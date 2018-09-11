@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,8 +20,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static com.connriver.connrail.MainActivity.TAG;
 
 public class ImportExportActivity extends AppCompatActivity {
 
@@ -131,6 +127,11 @@ public class ImportExportActivity extends AppCompatActivity {
         try {
             InputStream is = new FileInputStream(getDbPath());
             OutputStream os = getContentResolver().openOutputStream(uri);
+            if (os == null) {
+                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.output_error), this);
+                return;
+            }
+
             byte[] buffer = new byte[1024];
             int length;
             while ((length = is.read(buffer)) > 0) {
@@ -139,7 +140,7 @@ public class ImportExportActivity extends AppCompatActivity {
             is.close();
             os.close();
         } catch(IOException e) {
-            Log.d(TAG, "exception - stream copy");
+            e.printStackTrace();
             return;
         }
         Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.export_done), this);
@@ -150,7 +151,13 @@ public class ImportExportActivity extends AppCompatActivity {
         try {
             int length;
             byte[] buffer = new byte[1024];
+
+            // open for single read to see if file is empty
             InputStream is = getContentResolver().openInputStream(uri);
+            if (is == null) {
+                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.input_error), this);
+                return;
+            }
 
             // check for empty file and error/return
             if (is.read(buffer) <= 0) {
@@ -158,8 +165,14 @@ public class ImportExportActivity extends AppCompatActivity {
                 is.close();
                 return;
             }
-            is.close();
+            is.close(); //close the file and reopen for actual import
+
+
             is = getContentResolver().openInputStream(uri);
+            if (is == null) {
+                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.input_error), this);
+                return;
+            }
 
             OutputStream os = new FileOutputStream(getDbPath());
             while ((length = is.read(buffer)) > 0) {
@@ -168,7 +181,7 @@ public class ImportExportActivity extends AppCompatActivity {
             is.close();
             os.close();
         } catch(IOException e) {
-            Log.d(TAG, "exception - stream copy");
+            e.printStackTrace();
             return;
         }
 

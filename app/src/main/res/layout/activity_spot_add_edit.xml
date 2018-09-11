@@ -77,14 +77,16 @@
                 android:layout_weight="1"
                 android:enabled="false"
                 android:layout_height="wrap_content"
-                android:text="@string/button_save"/>
+                android:text="@string/button_save"
+                tools:ignore="ButtonStyle" />
             <Button
                 android:id="@+id/btnSpotDelete"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:enabled="false"
                 android:layout_height="wrap_content"
-                android:text="@string/button_delete"/>
+                android:text="@string/button_delete"
+                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 

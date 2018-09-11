@@ -11,7 +11,6 @@
     <string name="car">car</string>
     <string name="cars">cars</string>
 
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
@@ -23,7 +22,6 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_done">Done</string>
-    <string name="button_search">Search</string>
     <string name="button_edit">Edit</string>
     <!-- } Generic buttons -->
 
@@ -43,7 +41,6 @@
     <string name="menu_car_status">Car Location</string>
 
     <string name="menu_setup">Setup</string>
-    <string name="menu_user_list">User List</string>
     <string name="menu_spot_list">Spot List</string>
     <string name="menu_car_list">Car List</string>
     <string name="menu_car_info">Car Info</string>
@@ -57,8 +54,6 @@
 
     <string name="about_text">This is the about text</string>
     <string name="website_link">http://connriverlines.weebly.com/</string>
-
-    <string name="help_text">This is some help text that provides help. TODO - put in separate file. This is some help text that provides help. TODO - put in separate file. This is some help text that provides help. TODOD - put in separate file. This is some help text that provides help. TODO - put in separate file. This is some help text that provides help. TODO - put in separate file.This is some help text that provides help. TODOD - put in separate file.</string>
 
     <!-- Car Add/Edit { -->
     <string name="title_car_add_edit">Car Add/Edit</string>
@@ -144,9 +139,9 @@
     <string name="deliver">Deliver</string>
     <string name="setout_desc">Setout car to temporary location</string>
     <string name="setout">Setout</string>
+    <string name="setout_spot">Setout Spot</string>
     <string name="current_town">Current City/Town</string>
 
-    <string name="show_all_cars">Show all cars</string>
     <string name="days_to_hold">Days to hold car: </string>
 
     <string name="all">[All]</string>
@@ -157,7 +152,8 @@
     <string name="export_done">Export complete</string>
     <string name="import_done">Import complete</string>
     <string name="import_empty">Import file is empty</string>
-    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="input_error">Input file error</string>
+    <string name="output_error">Output file error</string>
 
     <!-- User Type -->
     <string name="user_single">Single User</string>
@@ -170,5 +166,17 @@
     <string name="user_owner_desc">Multiple users for the system. Public database resides on this user\'s device. Remote users can access data over the network.</string>
     <string name="user_remote">Remote User</string>
     <string name="user_remote_desc">Multiple users for the system. Public database resides on another user\'s device (the Owner). This user can access data over the network.</string>
+    <string name="owner_ip_address">Owner IP Address</string>
+
+    <!-- Content Descriptions -->
+    <string name="down_arrow">Down arrow</string>
+    <string name="main_screen_image">Main screen image</string>
+    <string name="edit_button">Edit button</string>
+    <string name="error_icon">Error icon</string>
+    <string name="crosshairs_icon">Crosshairs icon</string>
+    <string name="hold_hand_icon">Hold hand icon</string>
+    <string name="forward_arrow_icon">Forward arrow icon</string>
+    <string name="train_icon">Train icon</string>
+    <string name="not_found">Not Found</string>
 
 </resources>

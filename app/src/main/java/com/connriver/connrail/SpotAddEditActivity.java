@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,7 +29,6 @@ import static com.connriver.connrail.MainActivity.MSG_DATA_TAG;
 import static com.connriver.connrail.MainActivity.MSG_DELETE_SPOT_DATA;
 import static com.connriver.connrail.MainActivity.MSG_TYPE_TAG;
 import static com.connriver.connrail.MainActivity.MSG_UPDATE_SPOT_DATA;
-import static com.connriver.connrail.MainActivity.TAG;
 
 public class SpotAddEditActivity extends AppCompatActivity {
     private AutoCompleteTextView actvTown;
@@ -39,9 +37,6 @@ public class SpotAddEditActivity extends AppCompatActivity {
     private Button btnSave;
     private SpotData sdEdit;
 
-    private int len(CharSequence cs) {
-        return cs.toString().trim().length();
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +45,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
 
         actvTown = (AutoCompleteTextView) findViewById(R.id.actvSpotTown);
         actvTown.setThreshold(1);
-        final ArrayList<String> townList = Utils.getTownList(false);
+        final ArrayList<String> townList = Utils.getTownList(false, this);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, townList);
         actvTown.setAdapter(adapter);
 
@@ -139,7 +134,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
         etTrack.setText(sdEdit.getTrack());
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (sdEdit == null) {
@@ -160,7 +155,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.d(TAG, "JSON Exception");
+                    e.printStackTrace();
                 }
             }
         }
@@ -184,7 +179,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
         String sIndustry = Utils.trim(etIndustry);
         String sTrack = Utils.trim(etTrack);
         btnSave.setEnabled(sTown.length() > 0 &&
-                (!sTown.equals(sdEdit.getTown()) || !sIndustry.equals(sdEdit.getIndustry()) || !sTrack.equals(sdEdit.getTrack())));
+                (sdEdit == null || !sTown.equals(sdEdit.getTown()) || !sIndustry.equals(sdEdit.getIndustry()) || !sTrack.equals(sdEdit.getTrack())));
     }
 
     @Override
@@ -221,7 +216,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getResources().getString(R.string.button_save),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if (!saveSpot()) {
+                        if (saveSpotAbort()) {
                             dialog.dismiss();
                         } else {
                             dialog.dismiss();
@@ -247,7 +242,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
     }
 
     private void onSaveClicked() {
-        if (!saveSpot()) {
+        if (saveSpotAbort()) {
             return;
         }
         finish();
@@ -269,10 +264,10 @@ public class SpotAddEditActivity extends AppCompatActivity {
         return false;
     }
 
-    private boolean saveSpot() {
+    private boolean saveSpotAbort() {
         // check for duplicate and message if found
         if (dupFound()) {
-            return false;
+            return true;
         }
 
         SpotData sd = new SpotData();
@@ -285,7 +280,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
         sd.setTrack(Utils.trim(etTrack));
 
         MainActivity.spotAddEditDelete(sd, false);
-        return true;
+        return false;
     }
 
     // get how many cars are currently using this spot
@@ -331,7 +326,7 @@ public class SpotAddEditActivity extends AppCompatActivity {
         if (sdEdit != null) {
             MainActivity.spotAddEditDelete(sdEdit, true);
         }
-        Utils.removeAllDeadSpots(); //TODO - this is done on remote loop back
+        Utils.removeAllDeadSpots();
         finish();
     }
 

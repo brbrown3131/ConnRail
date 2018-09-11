@@ -25,12 +25,14 @@
              <LinearLayout
                  android:layout_width="match_parent"
                  android:layout_height="wrap_content"
-                 android:orientation="horizontal">
+                 android:orientation="horizontal"
+                 tools:ignore="UseCompoundDrawables">
 
                  <ImageView
                      android:layout_width="wrap_content"
                      android:layout_height="match_parent"
-                     android:src="@drawable/ic_crosshairs_gps"/>
+                     android:src="@drawable/ic_crosshairs_gps"
+                     tools:ignore="ContentDescription" />
                  <TextView
                      android:layout_width="match_parent"
                      android:layout_height="wrap_content"
@@ -43,19 +45,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/town" />
                 <TextView
                     android:id="@+id/cur_town"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="Town" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -63,19 +64,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/industry" />
                 <TextView
                     android:id="@+id/cur_industry"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="Industry" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -83,19 +83,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/track" />
                 <TextView
                     android:id="@+id/cur_track"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="Track" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
              <LinearLayout
@@ -105,19 +104,18 @@
                  android:visibility="gone"
                  android:orientation="horizontal">
                  <TextView
-                     android:layout_marginLeft="@dimen/activity_vertical_margin"
+                     android:layout_marginStart="@dimen/activity_vertical_margin"
                      android:layout_width="0dp"
                      android:layout_weight=".3"
-                     android:gravity="right"
+                     android:gravity="end"
                      android:layout_height="wrap_content"
                      android:text="@string/lading" />
                  <TextView
                      android:id="@+id/tvCurrLading"
-                     android:layout_marginLeft="@dimen/small_margin"
+                     android:layout_marginStart="@dimen/small_margin"
                      android:layout_width="0dp"
                      android:layout_weight=".7"
-                     android:layout_height="wrap_content"
-                     android:text="[lading]" />
+                     android:layout_height="wrap_content"/>
              </LinearLayout>
 
              <LinearLayout
@@ -127,19 +125,18 @@
                  android:visibility="gone"
                  android:orientation="horizontal">
                  <TextView
-                     android:layout_marginLeft="@dimen/activity_vertical_margin"
+                     android:layout_marginStart="@dimen/activity_vertical_margin"
                      android:layout_width="0dp"
                      android:layout_weight=".3"
-                     android:gravity="right"
+                     android:gravity="end"
                      android:layout_height="wrap_content"
                      android:text="@string/instructions" />
                  <TextView
                      android:id="@+id/tvCurrInstructions"
-                     android:layout_marginLeft="@dimen/small_margin"
+                     android:layout_marginStart="@dimen/small_margin"
                      android:layout_width="0dp"
                      android:layout_weight=".7"
-                     android:layout_height="wrap_content"
-                     android:text="[inst]" />
+                     android:layout_height="wrap_content"/>
              </LinearLayout>
 
 
@@ -151,12 +148,14 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_margin"
             android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_error"/>
+                android:src="@drawable/ic_error"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -176,7 +175,8 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_train"/>
+                android:src="@drawable/ic_train"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:id="@+id/tvConsistName"
@@ -185,7 +185,6 @@
                 android:layout_weight=".4"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:text="[name]"
                 android:layout_height="wrap_content" />
 
             <TextView
@@ -193,7 +192,6 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="[description]"
                 android:layout_width="0dp"
                 android:layout_weight=".6"
                 android:layout_height="wrap_content" />
@@ -214,12 +212,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:src="@drawable/ic_forward"/>
+                    android:src="@drawable/ic_forward"
+                    tools:ignore="ContentDescription" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -233,19 +233,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/town" />
                 <TextView
                     android:id="@+id/dest_town"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="Town" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -253,19 +252,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/industry" />
                 <TextView
                     android:id="@+id/dest_industry"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="Industry" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -273,19 +271,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/track" />
                 <TextView
                     android:id="@+id/dest_track"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="Track" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -295,19 +292,18 @@
                 android:visibility="gone"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/lading" />
                 <TextView
                     android:id="@+id/tvDestLading"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="[lading]" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -317,19 +313,18 @@
                 android:visibility="gone"
                 android:orientation="horizontal">
                 <TextView
-                    android:layout_marginLeft="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".3"
-                    android:gravity="right"
+                    android:gravity="end"
                     android:layout_height="wrap_content"
                     android:text="@string/instructions" />
                 <TextView
                     android:id="@+id/tvDestInstructions"
-                    android:layout_marginLeft="@dimen/small_margin"
+                    android:layout_marginStart="@dimen/small_margin"
                     android:layout_width="0dp"
                     android:layout_weight=".7"
-                    android:layout_height="wrap_content"
-                    android:text="[inst]" />
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <Button
@@ -348,12 +343,14 @@
             android:layout_height="wrap_content"
             android:visibility="gone"
             android:layout_margin="@dimen/small_margin"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_error"/>
+                android:src="@drawable/ic_error"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -368,12 +365,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="UseCompoundDrawables">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_hold"/>
+                android:src="@drawable/ic_hold"
+                tools:ignore="ContentDescription" />
 
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -390,7 +389,7 @@
             android:background="@android:color/darker_gray"/>
 
         <TextView
-            android:layout_marginLeft="@dimen/small_margin"
+            android:layout_marginStart="@dimen/small_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/setout_desc" />

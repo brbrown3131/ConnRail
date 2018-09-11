@@ -1,6 +1,7 @@
 package com.connriver.connrail;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,11 @@ import java.util.Comparator;
 import static com.connriver.connrail.MainActivity.NONE;
 
 // displays a list of car data in a ListView
-public class CarList {
+class CarList {
 
-    private ListView lv;
-    Context context;
-    private ArrayList<CarData> carListData; // car list to use
-    private boolean bIsAlphabetical = true;
+    private final ListView lv;
+    private final Context context;
+    private final ArrayList<CarData> carListData; // car list to use
     private boolean bShowCurr = true;
     private boolean bShowDest = true;
 
@@ -58,10 +58,8 @@ public class CarList {
     // redisplay the list - call when a car is added or removed from the list
     public void resetList() {
 
-        if (bIsAlphabetical) {
-            //sort the list
-            Collections.sort(carListData, new CustomComparator());
-        }
+        //sort the list
+        Collections.sort(carListData, new CustomComparator());
 
         CarDataAdapter adapter = new CarDataAdapter(context, carListData);
         lv.setAdapter(adapter);
@@ -93,9 +91,8 @@ public class CarList {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            CarData cd = getItem(position);
-
+        @NonNull
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             ViewHolder holder;
 
             if (convertView == null) {
@@ -123,6 +120,11 @@ public class CarList {
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
+            }
+
+            CarData cd = getItem(position);
+            if (cd == null) {
+                return convertView;
             }
 
             // always show the car initials/number/type

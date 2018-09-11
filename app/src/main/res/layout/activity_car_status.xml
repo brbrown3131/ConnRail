@@ -10,7 +10,7 @@
         android:id="@+id/cbShowStored"
         android:text="@string/show_stored_cars"
         android:layout_width="wrap_content"
-        android:layout_marginLeft="@dimen/small_margin"
+        android:layout_marginStart="@dimen/small_margin"
         android:layout_marginTop="@dimen/small_margin"
         android:layout_height="wrap_content" />
 

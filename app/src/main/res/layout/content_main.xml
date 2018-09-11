@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
             android:gravity="center_horizontal"
-            android:text="Single User"/>
+            android:text="@string/user_single"/>
 
         <TextView
             android:id="@+id/tvUserStatus"
@@ -30,6 +30,7 @@
 
         <ImageView
             android:id="@+id/imageMain"
+            android:contentDescription="@string/main_screen_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/img_4934" />
@@ -43,8 +44,9 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:paddingRight="@dimen/small_margin"
+                android:paddingLeft="@dimen/small_margin"
                 android:layout_weight=".4"
                 android:text="@string/session_num"/>
 
@@ -52,9 +54,8 @@
                 android:id="@+id/tvSessionNumber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:layout_weight=".2"
-                android:text="0"/>
+                android:gravity="start"
+                android:layout_weight=".2"/>
 
             <Button
                 android:id="@+id/btnSessionNumber"
@@ -69,9 +70,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/small_margin"
+            android:paddingRight="@dimen/small_margin"
             android:text="@string/alerts"/>
 
-        <ListView
+        <com.connriver.connrail.StaticListView
             android:id="@+id/lvAlerts"
             android:layout_width="match_parent"
             android:layout_height="0pt"

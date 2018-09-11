@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:baselineAligned="false">
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="0dp"
@@ -94,13 +95,13 @@
 
         <TextView
             android:text="@string/hint_spots"
-            android:layout_marginLeft="@dimen/tiny_margin"
+            android:layout_marginStart="@dimen/tiny_margin"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <ListView
+        <com.connriver.connrail.StaticListView
             android:id="@+id/lvCarSpots"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,7 +113,7 @@
             android:layout_width="match_parent"
             android:layout_margin="@dimen/small_margin"
             android:layout_height="wrap_content"
-            android:drawableLeft="@android:drawable/ic_menu_add"
+            android:drawableStart="@android:drawable/ic_menu_add"
             android:text="@string/button_add_spot"/>
 
 
@@ -128,14 +129,16 @@
                 android:layout_weight=".5"
                 android:enabled="false"
                 android:layout_height="wrap_content"
-                android:text="@string/button_save"/>
+                android:text="@string/button_save"
+                tools:ignore="ButtonStyle" />
             <Button
                 android:id="@+id/btnCarDelete"
                 android:layout_width="0dp"
                 android:layout_weight=".5"
                 android:enabled="false"
                 android:layout_height="wrap_content"
-                android:text="@string/button_delete"/>
+                android:text="@string/button_delete"
+                tools:ignore="ButtonStyle" />
 
         </LinearLayout>
 

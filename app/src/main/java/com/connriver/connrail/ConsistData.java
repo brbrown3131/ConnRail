@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import java.io.Serializable;
 
 /**
- * Created by user on 1/25/2018.
+ * Created by bbrown on 1/25/2018
  */
 
 public class ConsistData implements Serializable {
@@ -30,6 +30,7 @@ public class ConsistData implements Serializable {
             sName = jsonData.getString("na");
             sDescription = jsonData.getString("de");
         } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
@@ -41,6 +42,7 @@ public class ConsistData implements Serializable {
             jsonData.put("de", sDescription);
             return jsonData;
         } catch (JSONException e) {
+            e.printStackTrace();
             return null;
         }
     }
