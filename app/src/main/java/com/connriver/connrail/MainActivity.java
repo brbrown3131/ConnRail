@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final int MSG_PING = 1;
     public static final int MSG_NO_PING = 2;
     public static final int MSG_REQUEST_FULL_DATA = 4;
+    public static final int MSG_FULL_DATA = 5;
     public static final int MSG_REQUEST_SESSION_DATA = 6;
     public static final int MSG_SESSION_DATA = 7;
     public static final int MSG_FULL_CAR_DATA = 8;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int GET_USER_TYPE = 1;
     public static final String USER_TYPE = "user_type";
     public static final String OWNER_IP = "owner_ip";
-    private String sOwnerIP = null;
+    private static String sOwnerIP = null;
 
     static final ArrayList<AlertData> alerts = new ArrayList<>();
 
@@ -149,6 +150,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         displayUserType();
 
         showSessionNumber();
+
+        // on rotation need to refresh the callbacks to the new activity
+        if (mOwner != null) {
+            mOwner.setCallback(this);
+        }
+        if (mRemote != null) {
+            mRemote.setCallback(this);
+        }
     }
 
     public static ArrayList<CarData> getCarList() {
@@ -164,16 +173,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static void updateSpot(SpotData sdAddEditDel, boolean bDelete) {
-        // remove the one with the same ID (if there)
         int id = sdAddEditDel.getID();
         for (SpotData sd : gSpotDataList) {
             if (sd.getID() == id) {
-                gSpotDataList.remove(sd);
-                break;
+                if (bDelete) {
+                    gSpotDataList.remove(sd);
+                } else {
+                    sd.fromJSON(sdAddEditDel.toJSON());
+                }
+                return;
             }
         }
-        if (!bDelete) { // only add on add or update
-            gSpotDataList.add(sdAddEditDel); // add to the spot list
+
+        if (!bDelete) { // if not doing a delete and not updated above - add
+            gSpotDataList.add(sdAddEditDel);
         }
     }
 
@@ -197,17 +210,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static void updateCar(CarData cdAddEditDel, boolean bDelete) {
-
-        // remove the one with the same ID (if there)
         int id = cdAddEditDel.getID();
         for (CarData cd : gCarDataList) {
             if (cd.getID() == id) {
-                gCarDataList.remove(cd);
-                break;
+                if (bDelete) {
+                    gCarDataList.remove(cd);
+                } else {
+                    cd.fromJSON(cdAddEditDel.toJSON());
+                }
+                return;
             }
         }
-        if (!bDelete) { // only add on add or update
-            gCarDataList.add(cdAddEditDel); // add to the car list
+        if (!bDelete) { // if not doing a delete and not updated above - add
+            gCarDataList.add(cdAddEditDel);
         }
     }
 
@@ -231,17 +246,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static void updateConsist(ConsistData cdAddEditDel, boolean bDelete) {
-        // remove the one with the same ID (if there)
         int id = cdAddEditDel.getID();
-
         for (ConsistData cd : gConsistDataList) {
             if (cd.getID() == id) {
-                gConsistDataList.remove(cd);
-                break;
+                if (bDelete) {
+                    gConsistDataList.remove(cd);
+                } else {
+                    cd.fromJSON(cdAddEditDel.toJSON());
+                }
+                return;
             }
         }
-        if (!bDelete) { // only add on add or update
-            gConsistDataList.add(cdAddEditDel); // add to the consist list
+
+        if (!bDelete) { // if not doing a delete and not updated above - add
+            gConsistDataList.add(cdAddEditDel);
         }
     }
 
@@ -472,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void handleTypeChange(int iType, String sOwnIP) {
+
         // return if nothing has changed
         if (iType == iUserType) {
             if (iType != USER_TYPE_REMOTE || sOwnIP.equals(sOwnerIP)) {
@@ -585,6 +604,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         tvUserStatus.setText(getResources().getString(R.string.remote_count) + " " + mOwner.getRemoteCount() );
                         break;
                     default:
+                        // a change could trigger an alert so update alerts
+                        showAlerts();
+
+                        // broadcast changes to any running activities
                         updateUI(iMsgType, sData);
 
                 }
@@ -620,6 +643,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         break;
 
                     default:
+                        // a change could trigger an alert so update alerts
+                        showAlerts();
+
+                        // broadcast changes to any running activities
                         updateUI(iMsgType, sData);
                 }
             }

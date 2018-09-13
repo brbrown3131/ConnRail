@@ -172,7 +172,11 @@ class Utils {
     // remove any deleted spots from the car's spotlist
     static void removeAllDeadSpots() {
         for (CarData cd : MainActivity.getCarList()) {
-            cd.removeDeadSpots();
+
+            // if a car had spots removed - update
+            if (cd.removeDeadSpots()) {
+                MainActivity.carAddEditDelete(cd, false);
+            }
         }
     }
 

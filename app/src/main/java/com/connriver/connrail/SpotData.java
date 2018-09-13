@@ -20,6 +20,10 @@ public class SpotData implements Serializable {
     }
 
     public SpotData(JSONObject jsonData) {
+        fromJSON(jsonData);
+    }
+
+    public void fromJSON(JSONObject jsonData) {
         try {
             id = jsonData.getInt("id");
             sTown = jsonData.getString("tn");

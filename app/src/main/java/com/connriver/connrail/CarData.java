@@ -36,6 +36,10 @@ public class CarData implements Serializable {
     }
 
     public CarData(JSONObject jsonData) {
+        fromJSON(jsonData);
+    }
+
+    public void fromJSON(JSONObject jsonData) {
         try {
             id = jsonData.getInt("id");
             sInitials = jsonData.getString("in");
@@ -43,6 +47,7 @@ public class CarData implements Serializable {
             sType = jsonData.getString("ty");
             sNotes = jsonData.getString("no");
 
+            listSpots.clear();
             JSONArray jsonList = (JSONArray) jsonData.get("ls");
             for (int ix = 0; ix < jsonList.length(); ix++) {
                 listSpots.add(new CarSpotData(jsonList.getJSONObject(ix)));
@@ -266,14 +271,19 @@ public class CarData implements Serializable {
     }
 
     // remove any deleted spots from the car's spotlist
-    void removeDeadSpots() {
+    boolean removeDeadSpots() {
+        boolean bRemoved = false;
+
         Iterator<CarSpotData> it = listSpots.iterator();
         while (it.hasNext()) {
             CarSpotData csd = it.next();
             if (Utils.getSpotFromID(csd.getID()) == null) {
                 it.remove();
+                bRemoved = true;
             }
         }
+
+        return bRemoved;
     }
 
     boolean invalidSpots() {

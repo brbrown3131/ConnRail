@@ -148,6 +148,8 @@ class CarList {
             if (cd.invalidSpots()) {
                 holder.llErrDest.setVisibility(View.VISIBLE);
                 holder.llDest.setVisibility(View.GONE);
+            } else {
+                holder.llErrDest.setVisibility(View.GONE);
             }
 
 

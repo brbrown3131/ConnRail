@@ -25,6 +25,10 @@ public class ConsistData implements Serializable {
     }
 
     public ConsistData(JSONObject jsonData) {
+        fromJSON(jsonData);
+    }
+
+    public void fromJSON(JSONObject jsonData) {
         try {
             id = jsonData.getInt("id");
             sName = jsonData.getString("na");

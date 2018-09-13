@@ -18,6 +18,7 @@ import static com.connriver.connrail.MainActivity.MSG_DELETE_CONSIST_DATA;
 import static com.connriver.connrail.MainActivity.MSG_DELETE_SPOT_DATA;
 import static com.connriver.connrail.MainActivity.MSG_FULL_CAR_DATA;
 import static com.connriver.connrail.MainActivity.MSG_FULL_CONSIST_DATA;
+import static com.connriver.connrail.MainActivity.MSG_FULL_DATA;
 import static com.connriver.connrail.MainActivity.MSG_FULL_SPOT_DATA;
 import static com.connriver.connrail.MainActivity.MSG_REQUEST_FULL_DATA;
 import static com.connriver.connrail.MainActivity.MSG_REQUEST_SESSION_DATA;
@@ -43,6 +44,9 @@ class Remote {
     private boolean bConnected = false;
     private boolean bRequestAllData = true;
     private static final int TIMEOUT_INTERVAL = 10000;
+    private boolean bReceivedSpotInfo = false;
+    private boolean bReceivedConsistInfo = false;
+    private boolean bReceivedCarInfo = false;
 
     Remote(OnDataUpdate callback, String sx) {
         sIP = sx;
@@ -65,6 +69,10 @@ class Remote {
             }
         }, TIMEOUT_INTERVAL, TIMEOUT_INTERVAL);
 
+    }
+
+    void setCallback(OnDataUpdate callback) {
+        mCallback = callback;
     }
 
     void close() {
@@ -129,8 +137,15 @@ class Remote {
         switch (iMsgType) {
             case MSG_PING:
                 bConnected = true;
-                if (bRequestAllData) { // if flagged to request owner data - send requests //TODO - auto send on connect?
+                if (bRequestAllData) { // if flagged to request owner data - send requests
                     bRequestAllData = false;
+
+                    // turn off flags that we have all the table data
+                    bReceivedSpotInfo = false;
+                    bReceivedConsistInfo = false;
+                    bReceivedCarInfo = false;
+
+                    //send the owner session#/data table requests
                     send(MSG_REQUEST_SESSION_DATA, "");
                     send(MSG_REQUEST_FULL_DATA, "");
                 }
@@ -207,6 +222,15 @@ class Remote {
         }
     }
 
+    private void postParse() {
+        // when we get all 3 tables, tell the mainactivity
+        if (bReceivedSpotInfo && bReceivedConsistInfo && bReceivedCarInfo) {
+            if (mCallback != null) {
+                mCallback.onRemoteDataUpdate(MSG_FULL_DATA, "");
+            }
+        }
+    }
+
     private void parseSpotData(String sData) {
         try {
             JSONArray jArray = new JSONArray(sData);
@@ -218,6 +242,9 @@ class Remote {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        bReceivedSpotInfo = true;
+        postParse();
     }
 
     private void parseConsistData(String sData) {
@@ -231,6 +258,9 @@ class Remote {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        bReceivedConsistInfo = true;
+        postParse();
     }
 
     private void parseCarData(String sData) {
@@ -244,6 +274,9 @@ class Remote {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        bReceivedCarInfo = true;
+        postParse();
     }
 
     void send(int iMsgType, String sData) {

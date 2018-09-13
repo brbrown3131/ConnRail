@@ -94,6 +94,10 @@ class Owner {
         newSocketThread.start();
     }
 
+    void setCallback(OnDataUpdate callback) {
+        mCallback = callback;
+    }
+
     void close() {
 
         timer.cancel();

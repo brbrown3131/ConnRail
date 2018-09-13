@@ -326,7 +326,9 @@ public class SpotAddEditActivity extends AppCompatActivity {
         if (sdEdit != null) {
             MainActivity.spotAddEditDelete(sdEdit, true);
         }
+
         Utils.removeAllDeadSpots();
+
         finish();
     }
 
