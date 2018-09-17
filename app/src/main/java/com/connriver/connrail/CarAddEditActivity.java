@@ -25,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -303,6 +304,7 @@ public class CarAddEditActivity extends AppCompatActivity {
         final TextView tvSpotLading = (TextView) dialogView.findViewById(R.id.tvSpotLading);
         final TextView tvSpotInst = (TextView) dialogView.findViewById(R.id.tvSpotInstructions);
         final ImageView ivEdit = (ImageView) dialogView.findViewById(R.id.btnEdit);
+        final LinearLayout llEdit = (LinearLayout) dialogView.findViewById(R.id.llLadingInst);
         final NumberPicker npDays = (NumberPicker) dialogView.findViewById(R.id.npDays);
 
         final CarSpotData csd = listCarSpotData.get(position);
@@ -317,6 +319,12 @@ public class CarAddEditActivity extends AppCompatActivity {
         }
 
         ivEdit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                editLadingInstruct(tvSpotLading, tvSpotInst);
+            }
+        });
+
+        llEdit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 editLadingInstruct(tvSpotLading, tvSpotInst);
             }
@@ -393,7 +401,7 @@ public class CarAddEditActivity extends AppCompatActivity {
         String sNum = Utils.trim(etNum);
         String sNotes = Utils.trim(etNotes);
         String sType = actvType.getText().toString().trim();
-        btnSave.setEnabled(sInit.length() > 0 && sNum.length() > 0 &&
+        btnSave.setEnabled(sInit.length() > 0 && sNum.length() > 0 && sType.length() > 0 &&
                 (!sInit.equals(cdEdit.getInitials()) ||
                 !sNum.equals(cdEdit.getNumber()) ||
                 !sNotes.equals(cdEdit.getNotes()) ||
