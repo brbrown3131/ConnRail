@@ -39,8 +39,8 @@
             android:label="@string/menu_help"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:name=".ImportExportActivity"
-            android:label="@string/action_import_export"
+            android:name=".BackupRestoreActivity"
+            android:label="@string/action_backup_restore"
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".ConsistListActivity"

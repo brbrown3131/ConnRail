@@ -460,8 +460,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_import_export:
-                startActivity(new Intent(this, ImportExportActivity.class));
+            case R.id.action_backup_restore:
+                startActivity(new Intent(this, BackupRestoreActivity.class));
                 break;
             case R.id.action_user_type:
                 Intent intent = new Intent(this, UserTypeActivity.class);

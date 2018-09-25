@@ -30,7 +30,7 @@
     <string name="text_days">days</string>
     <!-- } Generic text { -->
 
-    <string name="action_import_export">Import/Export DB</string>
+    <string name="action_backup_restore">Backup/Restore DB</string>
     <string name="action_user_type">User Type</string>
     <string name="action_end">End</string>
 
@@ -52,7 +52,8 @@
 
     <!-- } App Menus -->
 
-    <string name="about_text">This is the about text</string>
+    <string name="about_version">Version 1.0.0</string>
+    <string name="about_date">2018</string>
     <string name="website_link">http://connriverlines.weebly.com/</string>
 
     <!-- Car Add/Edit { -->
@@ -146,12 +147,12 @@
 
     <string name="all">[All]</string>
 
-    <string name="msg_overwrite_sure">Import will overwrite all changes made since selected file export. Are you sure you want to import?</string>
-    <string name="import_db">Import Database File</string>
-    <string name="export_db">Export Database File</string>
-    <string name="export_done">Export complete</string>
-    <string name="import_done">Import complete</string>
-    <string name="import_empty">Import file is empty</string>
+    <string name="msg_overwrite_sure">Restore will overwrite all changes made since selected backup file was created. Are you sure you want to restore?</string>
+    <string name="restore_db">Restore Database</string>
+    <string name="backup_db">Backup Database</string>
+    <string name="backup_done">Backup complete</string>
+    <string name="restore_done">Restore complete</string>
+    <string name="restore_empty">Backup file is empty</string>
     <string name="input_error">Input file error</string>
     <string name="output_error">Output file error</string>
 

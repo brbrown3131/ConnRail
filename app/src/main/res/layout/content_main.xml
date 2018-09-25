@@ -39,6 +39,8 @@
             android:id="@+id/llSessionNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingRight="@dimen/small_margin"
+            android:paddingLeft="@dimen/small_margin"
             android:orientation="horizontal">
 
             <TextView

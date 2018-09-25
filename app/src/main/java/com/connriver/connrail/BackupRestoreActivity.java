@@ -21,27 +21,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ImportExportActivity extends AppCompatActivity {
+public class BackupRestoreActivity extends AppCompatActivity {
 
-    private static final int PATH_SELECT_EXPORT = 0;
-    private static final int PATH_SELECT_IMPORT = 1;
+    private static final int PATH_SELECT_BACKUP = 0;
+    private static final int PATH_SELECT_RESTORE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_import_export);
+        setContentView(R.layout.activity_backup_restore);
 
-        final Button btnImport = (Button) findViewById(R.id.btnImport);
-        btnImport.setOnClickListener(new View.OnClickListener() {
+        final Button btnRestore = (Button) findViewById(R.id.btnRestore);
+        btnRestore.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                importDB();
+                restoreDB();
             }
         });
 
-        final Button btnExport = (Button) findViewById(R.id.btnExport);
-        btnExport.setOnClickListener(new View.OnClickListener() {
+        final Button btnBackup = (Button) findViewById(R.id.btnBackup);
+        btnBackup.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                exportDB();
+                backupDB();
             }
         });
     }
@@ -65,7 +65,7 @@ public class ImportExportActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void importDB() {
+    private void restoreDB() {
 
         // if permission.READ_EXTERNAL_STORAGE not allowed - return
         if (!isReadAllowed()) {
@@ -78,10 +78,10 @@ public class ImportExportActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        startActivityForResult(intent, PATH_SELECT_IMPORT);
+        startActivityForResult(intent, PATH_SELECT_RESTORE);
     }
 
-    private void exportDB() {
+    private void backupDB() {
 
         // if permission.WRITE_EXTERNAL_STORAGE not allowed - return
         if (!isWriteAllowed()) {
@@ -95,27 +95,27 @@ public class ImportExportActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_TITLE, DBUtils.getDbName() + ".db");
-        startActivityForResult(intent, PATH_SELECT_EXPORT);
+        intent.putExtra(Intent.EXTRA_TITLE, DBUtils.getDbName() + ".bak");
+        startActivityForResult(intent, PATH_SELECT_BACKUP);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case PATH_SELECT_EXPORT:
+            case PATH_SELECT_BACKUP:
                 if (resultCode == RESULT_OK) {
                     // Get the Uri of the selected file
                     Uri uri = data.getData();
                     // copy current db to selected uri
-                    exportCopy(uri);
+                    backupCopy(uri);
                 }
                 break;
-            case PATH_SELECT_IMPORT:
+            case PATH_SELECT_RESTORE:
                 if (resultCode == RESULT_OK) {
                     // Get the Uri of the selected file
                     Uri uri = data.getData();
                     // copy current db to selected uri
-                    importCopy(uri);
+                    restoreCopy(uri);
                 }
                 break;
 
@@ -123,7 +123,7 @@ public class ImportExportActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void exportCopy(Uri uri) {
+    private void backupCopy(Uri uri) {
         try {
             InputStream is = new FileInputStream(getDbPath());
             OutputStream os = getContentResolver().openOutputStream(uri);
@@ -143,10 +143,10 @@ public class ImportExportActivity extends AppCompatActivity {
             e.printStackTrace();
             return;
         }
-        Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.export_done), this);
+        Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.backup_done), this);
     }
 
-    private void importCopy(Uri uri) {
+    private void restoreCopy(Uri uri) {
 
         try {
             int length;
@@ -161,7 +161,7 @@ public class ImportExportActivity extends AppCompatActivity {
 
             // check for empty file and error/return
             if (is.read(buffer) <= 0) {
-                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.import_empty), this);
+                Utils.messageBox(getResources().getString(R.string.error), getResources().getString(R.string.restore_empty), this);
                 is.close();
                 return;
             }
@@ -188,7 +188,7 @@ public class ImportExportActivity extends AppCompatActivity {
         // reinitialize with new data
         MainActivity.loadDBData(getBaseContext());
 
-        Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.import_done), this);
+        Utils.messageBox(getResources().getString(R.string.success), getResources().getString(R.string.restore_done), this);
     }
 
     private String getDbPath() {
