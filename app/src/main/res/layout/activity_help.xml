@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.connriver.connrail.HelpActivity">
+    tools:context="com.connriverlines.connrail.HelpActivity">
 
     <WebView
         android:id="@+id/helpView"

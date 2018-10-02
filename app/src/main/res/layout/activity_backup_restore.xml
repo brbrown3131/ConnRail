@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.connriver.connrail.BackupRestoreActivity">
+    tools:context="com.connriverlines.connrail.BackupRestoreActivity">
 
     <Button
         android:id="@+id/btnBackup"

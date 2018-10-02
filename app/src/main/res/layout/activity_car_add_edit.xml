@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.connriver.connrail.CarAddEditActivity"
+    tools:context="com.connriverlines.connrail.CarAddEditActivity"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fillViewport="true">
@@ -101,7 +101,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <com.connriver.connrail.StaticListView
+        <com.connriverlines.connrail.StaticListView
             android:id="@+id/lvCarSpots"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.connriver.connrail">
+    package="com.connriverlines.connrail">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="com.connriverlines.connrail.SplashScreenActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,64 +26,64 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.connriverlines.connrail.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".AboutActivity"
+            android:name="com.connriverlines.connrail.AboutActivity"
             android:label="@string/menu_about"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".HelpActivity"
+            android:name="com.connriverlines.connrail.HelpActivity"
             android:label="@string/menu_help"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".BackupRestoreActivity"
+            android:name="com.connriverlines.connrail.BackupRestoreActivity"
             android:label="@string/action_backup_restore"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".ConsistListActivity"
+            android:name="com.connriverlines.connrail.ConsistListActivity"
             android:label="@string/menu_consist_list"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".ConsistActivity"
-            android:parentActivityName=".ConsistListActivity" />
+            android:name="com.connriverlines.connrail.ConsistActivity"
+            android:parentActivityName="com.connriverlines.connrail.ConsistListActivity" />
         <activity
-            android:name=".YardListActivity"
+            android:name="com.connriverlines.connrail.YardListActivity"
             android:label="@string/menu_yard_list"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".CarLocationListActivity"
+            android:name="com.connriverlines.connrail.CarLocationListActivity"
             android:label="@string/menu_car_status"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".CarLocationActivity"
-            android:parentActivityName=".CarLocationListActivity" />
+            android:name="com.connriverlines.connrail.CarLocationActivity"
+            android:parentActivityName="com.connriverlines.connrail.CarLocationListActivity" />
         <activity
-            android:name=".CarListActivity"
+            android:name="com.connriverlines.connrail.CarListActivity"
             android:label="@string/menu_car_list"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".CarInfoActivity"
+            android:name="com.connriverlines.connrail.CarInfoActivity"
             android:label="@string/menu_car_info"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".SpotListActivity"
+            android:name="com.connriverlines.connrail.SpotListActivity"
             android:label="@string/menu_spot_list"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
         <activity
-            android:name=".CarAddEditActivity"
+            android:name="com.connriverlines.connrail.CarAddEditActivity"
             android:label="@string/title_car_add_edit"
-            android:parentActivityName=".CarListActivity" />
+            android:parentActivityName="com.connriverlines.connrail.CarListActivity" />
         <activity
-            android:name=".SpotAddEditActivity"
+            android:name="com.connriverlines.connrail.SpotAddEditActivity"
             android:label="@string/title_spot_add_edit"
-            android:parentActivityName=".SpotListActivity" />
+            android:parentActivityName="com.connriverlines.connrail.SpotListActivity" />
         <activity
-            android:name=".UserTypeActivity"
+            android:name="com.connriverlines.connrail.UserTypeActivity"
             android:label="@string/action_user_type"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName="com.connriverlines.connrail.MainActivity" />
     </application>
 
 </manifest>

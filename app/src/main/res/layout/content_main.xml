@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.connriver.connrail.MainActivity"
+    tools:context="com.connriverlines.connrail.MainActivity"
     tools:showIn="@layout/app_bar_main"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_width="fill_parent"
@@ -75,7 +75,7 @@
             android:paddingRight="@dimen/small_margin"
             android:text="@string/alerts"/>
 
-        <com.connriver.connrail.StaticListView
+        <com.connriverlines.connrail.StaticListView
             android:id="@+id/lvAlerts"
             android:layout_width="match_parent"
             android:layout_height="0pt"
